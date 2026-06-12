@@ -1,12 +1,7 @@
 {
   "name": "condor-market-intelligence",
   "version": "1.0.0",
-  "description": "Autonomous weekly aviation market reports for Project Condor",
   "type": "module",
-  "scripts": {
-    "generate": "node scripts/generate.js",
-    "dev": "node scripts/generate.js --dry-run"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "node-fetch": "^3.3.2"
