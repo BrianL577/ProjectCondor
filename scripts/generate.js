@@ -1,19 +1,19 @@
 // ============================================================
 // Condor Market Intelligence — Weekly Report Generator
 // Runs every Monday via GitHub Actions scheduler
-// Calls Gemini AI → saves reports to Supabase database
+// Calls Groq AI → saves reports to Supabase database
 // ============================================================
 
 import fetch from 'node-fetch';
 import { createClient } from '@supabase/supabase-js';
 
-const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const GROQ_KEY = process.env.GROQ_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const DRY_RUN = process.argv.includes('--dry-run');
 
-if (!GEMINI_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('Missing required environment variables: GEMINI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY');
+if (!GROQ_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('Missing required environment variables: GROQ_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY');
   process.exit(1);
 }
 
@@ -41,7 +41,7 @@ const LOCATIONS = [
     baseline: { competitorCount: 5, airportTier: 1, marketSize: '5.16M pax/yr', annualOps: '~98,938', fuelFlowage: 'High', mroOperators: 'Signature, StandardAero', facilitySqFt: '~65,000', maintenanceCategory: 'Hybrid', signaturePosition: 'Leading Provider', namedCompetitors: 'Tac Air (Acquired)', marketShare: 'Dominant', positionalRank: '#1' }},
   { code: 'STP', name: 'St. Paul Downtown Airport', city: 'St. Paul, MN', type: 'TECHNICair Repair Station', country: 'US',
     baseline: { competitorCount: 4, airportTier: 2, marketSize: 'Reliever (Private)', siteEbitda: '$1.3M', annualOps: '~42,476', fuelFlowage: 'Med', mroOperators: 'Signature TECHNICair', facilitySqFt: '~25,000', maintenanceCategory: 'Hybrid', signaturePosition: 'Maintenance Hub', namedCompetitors: 'Regent Aviation', marketShare: 'Main Maint. Hub', positionalRank: '#1' }},
-  { code: 'BUF', name: 'Buffalo Niagara Int\'l', city: 'Buffalo, NY', type: 'Signature FBO/MRO', country: 'US',
+  { code: 'BUF', name: "Buffalo Niagara Int'l", city: 'Buffalo, NY', type: 'Signature FBO/MRO', country: 'US',
     baseline: { competitorCount: 7, airportTier: 1, marketSize: '5.0M pax/yr', annualOps: '~72,700', fuelFlowage: 'High', mroOperators: 'Signature (TAC Air)', facilitySqFt: '126,000', maintenanceCategory: 'Hybrid', signaturePosition: 'Regional Lead', namedCompetitors: 'Prior: TAC Air', marketShare: 'High (Legacy TAC)', positionalRank: '#1' }},
   { code: 'CHO', name: 'Charlottesville-Albemarle', city: 'Charlottesville, VA', type: 'Signature FBO/MRO', country: 'US',
     baseline: { competitorCount: 3, airportTier: 2, marketSize: '~0.7M pax/yr', annualOps: '~32,000', fuelFlowage: 'Med', mroOperators: 'Landmark (Signature)', facilitySqFt: '~18,000', maintenanceCategory: 'Hybrid', signaturePosition: 'Leading Provider', marketShare: '~40%', positionalRank: 'Leading Provider' }},
@@ -55,7 +55,7 @@ const LOCATIONS = [
     baseline: { competitorCount: 6, airportTier: 2, marketSize: '4.89M pax/yr', annualOps: '~72,000', fuelFlowage: 'High', mroOperators: 'Landmark (Signature)', facilitySqFt: '~45,000', maintenanceCategory: 'Hybrid', signaturePosition: 'Regional Leader', marketShare: 'Dominant', positionalRank: 'Regional Leader' }},
   { code: 'ROA', name: 'Roanoke-Blacksburg Regional', city: 'Roanoke, VA', type: 'Signature FBO/MRO', country: 'US',
     baseline: { competitorCount: 4, airportTier: 2, marketSize: '~0.75M pax/yr', annualOps: '~55,300', fuelFlowage: 'Med', mroOperators: 'Landmark (Signature)', facilitySqFt: '~12,000', maintenanceCategory: 'Hybrid', signaturePosition: 'Leading Provider', marketShare: '~55%', positionalRank: 'Leading Provider' }},
-  { code: 'SLC', name: 'Salt Lake City Int\'l', city: 'Salt Lake City, UT', type: 'Signature FBO/MRO', country: 'US',
+  { code: 'SLC', name: "Salt Lake City Int'l", city: 'Salt Lake City, UT', type: 'Signature FBO/MRO', country: 'US',
     baseline: { competitorCount: 11, airportTier: 1, marketSize: '28.1M pax/yr', annualOps: '319,993', fuelFlowage: 'Very High', mroOperators: 'Keystone (Signature), Duncan', facilitySqFt: '~200,000+', maintenanceCategory: 'Heavy', signaturePosition: 'Sole FBO Leader', namedCompetitors: 'None (Sole Source GA Fuel)', marketShare: '~100% (GA Fuel)', positionalRank: '#1 of 1' }},
   { code: 'BOH', name: "Bournemouth Int'l Airport", city: 'Bournemouth, England', type: 'TECHNICair UK Repair Station', country: 'UK',
     baseline: { competitorCount: 5, airportTier: 2, marketSize: '~1.1M pax/yr', annualOps: '~42,000', fuelFlowage: 'Med', mroOperators: 'CSE Bournemouth (Signature)', maintenanceCategory: 'Hybrid', signaturePosition: 'Leading Provider', namedCompetitors: 'XJET', marketShare: '~35%', positionalRank: 'Leading Provider' }},
@@ -70,7 +70,7 @@ const LOCATIONS = [
 ];
 
 // ============================================================
-// Build the Gemini prompt for a single location
+// Build the prompt for a single location
 // ============================================================
 function buildPrompt(loc) {
   const isUK = loc.country === 'UK';
@@ -139,34 +139,36 @@ Respond ONLY with valid JSON — no markdown, no text before or after:
 }
 
 // ============================================================
-// Call Gemini API
+// Call Groq API (free, no quota issues)
 // ============================================================
-async function callGemini(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.15, maxOutputTokens: 3500 }
-  };
-
-  const response = await fetch(url, {
+async function callGroq(prompt) {
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${GROQ_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.15,
+      max_tokens: 3500
+    })
   });
 
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(`Gemini API error: ${err.error?.message || response.status}`);
+    throw new Error(`Groq API error: ${err.error?.message || response.status}`);
   }
 
   const data = await response.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const raw = data.choices?.[0]?.message?.content || '';
   const clean = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
 
   try {
     return JSON.parse(clean);
   } catch (e) {
-    throw new Error(`Failed to parse Gemini response as JSON: ${e.message}\nRaw: ${raw.slice(0, 200)}`);
+    throw new Error(`Failed to parse Groq response as JSON: ${e.message}\nRaw: ${raw.slice(0, 200)}`);
   }
 }
 
@@ -192,7 +194,7 @@ async function saveReport(reportData) {
 }
 
 // ============================================================
-// Sleep helper (rate limiting between API calls)
+// Sleep helper
 // ============================================================
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -205,6 +207,7 @@ async function run() {
   console.log(`Date: ${new Date().toISOString()}`);
   console.log(`Locations to process: ${LOCATIONS.length}`);
   console.log(`Mode: ${DRY_RUN ? 'DRY RUN (no DB writes)' : 'LIVE'}`);
+  console.log(`AI Engine: Groq (llama-3.3-70b-versatile)`);
   console.log(`========================================\n`);
 
   const results = { success: [], failed: [] };
@@ -215,7 +218,7 @@ async function run() {
 
     try {
       const prompt = buildPrompt(loc);
-      const report = await callGemini(prompt);
+      const report = await callGroq(prompt);
 
       if (!DRY_RUN) {
         await saveReport(report);
@@ -227,13 +230,8 @@ async function run() {
 
       results.success.push(loc.code);
 
-      // Rate limit: wait 65 seconds every 14 requests to stay under free tier quota
-      if ((i + 1) % 14 === 0 && i < LOCATIONS.length - 1) {
-        console.log(`  ⏸ Rate limit pause — waiting 65 seconds before continuing...`);
-        await sleep(65000);
-      } else if (i < LOCATIONS.length - 1) {
-        await sleep(2000);
-      }
+      // Small pause between calls to be respectful of the API
+      if (i < LOCATIONS.length - 1) await sleep(1000);
 
     } catch (err) {
       console.error(`  ✗ Failed: ${err.message}`);
