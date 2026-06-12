@@ -193,8 +193,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 // CONFIG — Vercel injects these at build time
 // These placeholders are replaced during deployment
 // ============================================================
-const SUPABASE_URL = 'https://phgoiezfrmlvszyoypvw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_mzGA23ZJc44Co7FtFPBU9g_EpqY-kLc';
+const CONDOR_DB_URL = 'https://phgoiezfrmlvszyoypvw.supabase.co';
+const CONDOR_DB_KEY = 'sb_publishable_mzGA23ZJc44Co7FtFPBU9g_EpqY-kLc';
 
 // ============================================================
 // Load Supabase client from CDN
@@ -209,7 +209,7 @@ let supabase;
 let allReports = [];
 
 function initApp() {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  supabase = window.supabase.createClient(CONDOR_DB_URL, CONDOR_DB_KEY);
   loadReports();
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
   setNextRun();
