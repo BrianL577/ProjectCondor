@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Condor Market Intelligence</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,13 +19,13 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
 .app{display:flex;min-height:100vh}
 .sidebar{width:256px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{flex:1;padding:2rem;max-width:1000px}
+.main{flex:1;padding:2rem;max-width:1100px}
 .sidebar-header{padding:1.25rem;border-bottom:1px solid var(--border)}
 .logo{font-size:15px;font-weight:600}
 .logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
 .nav{padding:.5rem 0;flex:1}
 .nav-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:.5rem 1.25rem .25rem}
-.nav-item{display:flex;align-items:center;gap:8px;padding:.45rem 1.25rem;cursor:pointer;font-size:13px;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s;border-radius:0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:.45rem 1.25rem;cursor:pointer;font-size:13px;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:var(--blue-bg);color:var(--blue-text);font-weight:500}
 .sidebar-foot{padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
@@ -43,49 +44,94 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-blue{background:var(--blue-bg);color:var(--blue-text)}
 .badge-green{background:var(--green-bg);color:var(--green-text)}
 .badge-amber{background:var(--amber-bg);color:var(--amber-text)}
-.badge-red{background:var(--red-bg);color:var(--red-text)}
 .badge-gray{background:var(--surface2);color:var(--text2)}
-.alert{padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:flex-start;margin-bottom:1rem}
-.alert-amber{background:var(--amber-bg);border:1px solid #f0c070;color:var(--amber-text)}
-.alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text)}
-.alert-red{background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text)}
+.alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
+.alert-red{background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
 .tbl th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2);white-space:nowrap}
 .tbl td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:var(--surface2)}
-.verified{color:var(--green-text);font-size:10px;padding:1px 5px;border-radius:3px;background:var(--green-bg)}
-.unverified{color:var(--amber-text);font-size:10px;padding:1px 5px;border-radius:3px;background:var(--amber-bg)}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.archive-item{display:flex;align-items:center;gap:12px;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:.5rem;cursor:pointer;background:var(--surface);transition:background .12s}
-.archive-item:hover{background:var(--surface2)}
-.archive-item.active{border-color:var(--blue);background:var(--blue-bg)}
-.sel{width:100%;padding:8px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px}
-.sel:focus{outline:none;border-color:var(--blue)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
-.btn:hover{background:var(--surface2)}
-.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue)}
-.btn-blue:hover{background:var(--blue-text);border-color:var(--blue-text)}
-.summary-block{margin-bottom:1rem}
-.summary-block h4{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.05em}
-.summary-block p{font-size:13px;color:var(--text);line-height:1.7}
-.signal{display:flex;gap:10px;padding:.5rem 0;border-bottom:1px solid var(--border);align-items:flex-start}
-.signal:last-child{border-bottom:none}
-.source-chip{display:inline-block;font-size:10px;padding:2px 6px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);margin:2px}
-.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+
+/* Archive folder styles */
+.week-folder{border:1px solid var(--border);border-radius:var(--r);margin-bottom:.75rem;overflow:hidden;background:var(--surface)}
+.week-folder-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;cursor:pointer;transition:background .12s;user-select:none}
+.week-folder-header:hover{background:var(--surface2)}
+.week-folder-header.open{background:var(--blue-bg);border-bottom:1px solid var(--border)}
+.week-folder-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.week-folder-meta{font-size:12px;color:var(--text3)}
+.week-folder-body{display:none;padding:1rem 1.25rem}
+.week-folder-body.open{display:block}
+.week-summary{background:var(--surface2);border-radius:var(--rs);padding:1rem;margin-bottom:1rem;border-left:3px solid var(--blue)}
+.week-summary h4{font-size:12px;font-weight:600;color:var(--blue-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+.week-summary p{font-size:13px;color:var(--text);line-height:1.7}
+.loc-item{display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:.4rem;cursor:pointer;background:var(--surface);transition:background .12s}
+.loc-item:hover{background:var(--surface2)}
+.loc-item.active{border-color:var(--blue);background:var(--blue-bg)}
+.loc-name{font-size:13px;font-weight:500;flex:1}
+.loc-code{font-size:11px;color:var(--text3);font-family:monospace}
+.loc-type{font-size:11px;color:var(--text2)}
+
+/* Report view */
+.report-view{margin-top:1.5rem}
+.report-header{margin-bottom:1.25rem}
+.report-title{font-size:18px;font-weight:700;margin-bottom:3px}
+.report-meta{font-size:12px;color:var(--text2)}
+.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;margin-top:1.25rem}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.kpi-item{background:var(--surface2);border-radius:var(--rs);padding:.75rem}
+.kpi-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.kpi-value{font-size:13px;color:var(--text);line-height:1.5}
+.kpi-source{font-size:10px;color:var(--text3);margin-top:2px}
+.signal-item{padding:.6rem 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+.signal-item:last-child{border-bottom:none}
+.signal-dir{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;flex-shrink:0;margin-top:2px}
+.dir-positive{background:var(--green-bg);color:var(--green-text)}
+.dir-negative{background:var(--red-bg);color:var(--red-text)}
+.dir-neutral{background:var(--surface2);color:var(--text2)}
+.signal-text{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px}
+.signal-detail{font-size:12px;color:var(--text2)}
+.source-chip{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);margin:2px}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--blue);cursor:pointer;margin-bottom:1rem;background:none;border:none;padding:0}
+.back-btn:hover{text-decoration:underline}
+
+/* Dashboard grid */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.dash-card{border:1px solid var(--border);border-radius:var(--r);padding:1rem;background:var(--surface);cursor:pointer;transition:all .12s}
+.dash-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(26,109,181,.08)}
+.dash-card-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.dash-card-meta{font-size:11px;color:var(--text3);margin-bottom:.5rem}
+.dash-card-preview{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Summary page */
+.summary-hero{background:linear-gradient(135deg,#1a3a5c 0%,#1a6db5 100%);border-radius:var(--r);padding:1.5rem;color:#fff;margin-bottom:1.5rem}
+.summary-hero h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.summary-hero p{font-size:13px;opacity:.85;line-height:1.6}
+.summary-section{margin-bottom:1.5rem}
+.summary-section h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.summary-row{display:flex;gap:12px;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.summary-row:last-child{border-bottom:none}
+.summary-loc{font-size:12px;font-weight:600;color:var(--text);min-width:80px;font-family:monospace}
+.summary-text{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
+
+.filter-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
 .filter-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;transition:all .12s}
 .filter-btn:hover{background:var(--surface2)}
 .filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-@media(max-width:680px){
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
+.btn:hover{background:var(--surface2)}
+@media(max-width:700px){
   .app{flex-direction:column}
-  .sidebar{width:100%;height:auto;position:static;flex-direction:row;overflow-x:auto}
+  .sidebar{width:100%;height:auto;position:static}
   .sidebar-header,.sidebar-foot,.nav-label{display:none}
-  .nav{display:flex;flex-direction:row;padding:.5rem;gap:4px}
+  .nav{display:flex;flex-direction:row;padding:.5rem;gap:4px;overflow-x:auto}
   .nav-item{white-space:nowrap;padding:.4rem .75rem;border-radius:var(--rs)}
   .main{padding:1rem}
+  .kpi-grid{grid-template-columns:1fr}
 }
-@media print{.sidebar,.filter-bar,.btn{display:none!important}.main{padding:.5rem}}
+@media print{.sidebar,.filter-bar,.btn,.back-btn{display:none!important}.main{padding:.5rem}}
 </style>
 </head>
 <body>
@@ -98,10 +144,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="nav">
       <div class="nav-label">Reports</div>
       <button class="nav-item active" onclick="nav('dashboard')">📊 Dashboard</button>
+      <button class="nav-item" onclick="nav('summary')">📋 Weekly summary</button>
       <button class="nav-item" onclick="nav('archive')">🗂 Report archive</button>
       <div class="nav-label" style="margin-top:.5rem">Info</div>
       <button class="nav-item" onclick="nav('sources')">🔗 Data sources</button>
-      <button class="nav-item" onclick="nav('about')">ℹ About</button>
     </div>
     <div class="sidebar-foot"><span class="dot"></span><span id="conn-status">Connecting...</span></div>
   </nav>
@@ -110,10 +156,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- DASHBOARD -->
     <div id="panel-dashboard" class="panel active">
-      <div class="page-title">Weekly Market Intelligence</div>
-      <div class="page-sub" id="dash-date">Loading...</div>
-      <div id="load-alert" class="alert alert-blue"><span class="spinner"></span> Loading latest reports from database...</div>
-      <div id="err-alert" class="alert alert-red" style="display:none">⚠ Could not connect to database. <span id="err-msg"></span></div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub" id="dash-date"></div>
+      <div id="load-alert" class="alert-blue"><span class="spinner"></span> Loading latest reports...</div>
+      <div id="err-alert" class="alert-red" style="display:none">⚠ <span id="err-msg"></span></div>
       <div class="metrics">
         <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">22</div><div class="metric-sub">US + UK/EMEA</div></div>
         <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
@@ -122,64 +168,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div class="card">
         <div class="card-title">Latest reports — this week</div>
-        <div id="latest-grid"></div>
+        <div id="dash-grid" class="dash-grid"></div>
       </div>
+      <div id="dash-report-view" style="display:none"></div>
+    </div>
+
+    <!-- WEEKLY SUMMARY -->
+    <div id="panel-summary" class="panel">
+      <div class="page-title">Weekly summary</div>
+      <div class="page-sub">Combined market intelligence across all 22 locations.</div>
+      <div id="summary-content"></div>
     </div>
 
     <!-- ARCHIVE -->
     <div id="panel-archive" class="panel">
       <div class="page-title">Report archive</div>
-      <div class="page-sub">All weekly reports, stored permanently. Filter by location or region.</div>
-      <div class="filter-bar" id="filter-bar">
+      <div class="page-sub">All reports organized by week. Click a folder to expand.</div>
+      <div class="filter-bar">
         <button class="filter-btn active" onclick="filterArchive('all',this)">All</button>
         <button class="filter-btn" onclick="filterArchive('US',this)">🇺🇸 US</button>
         <button class="filter-btn" onclick="filterArchive('UK',this)">🇬🇧 UK</button>
         <button class="filter-btn" onclick="filterArchive('TECHNICair',this)">TECHNICair</button>
         <button class="filter-btn" onclick="filterArchive('FBO',this)">FBO/MRO</button>
       </div>
-      <div id="archive-list"></div>
-      <div id="archive-report" style="margin-top:1.5rem;display:none"></div>
+      <div id="archive-folders"></div>
     </div>
 
     <!-- SOURCES -->
     <div id="panel-sources" class="panel">
       <div class="page-title">Data sources</div>
-      <div class="page-sub">Every report cites verified, publicly updated sources. Claims that cannot be verified are explicitly flagged.</div>
+      <div class="page-sub">Every report is grounded in live web search via Perplexity Sonar. All sources are cited per claim.</div>
       <div class="card">
         <table class="tbl">
-          <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th><th>URL</th></tr></thead>
+          <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th></tr></thead>
           <tbody>
-            <tr><td>FAA ATADS</td><td>Annual operations, ground delays</td><td>Monthly</td><td><a href="https://aspm.faa.gov" target="_blank">aspm.faa.gov</a></td></tr>
-            <tr><td>BTS T-100</td><td>Passenger traffic by airport</td><td>Monthly</td><td><a href="https://transtats.bts.gov" target="_blank">transtats.bts.gov</a></td></tr>
-            <tr><td>EIA Fuel Data</td><td>Jet-A price index (weekly)</td><td>Weekly</td><td><a href="https://api.eia.gov" target="_blank">api.eia.gov</a></td></tr>
-            <tr><td>FAA Part 145 DB</td><td>Verified MRO operators by airport</td><td>Continuous</td><td><a href="https://av-info.faa.gov" target="_blank">av-info.faa.gov</a></td></tr>
-            <tr><td>BLS OES</td><td>A&P mechanic labor costs</td><td>Monthly</td><td><a href="https://api.bls.gov" target="_blank">api.bls.gov</a></td></tr>
-            <tr><td>GAMA</td><td>Bizav shipments & activity</td><td>Quarterly</td><td><a href="https://gama.aero" target="_blank">gama.aero</a></td></tr>
-            <tr><td>AIN / Aviation Week RSS</td><td>Industry headlines & deals</td><td>Daily</td><td><a href="https://www.ainonline.com" target="_blank">ainonline.com</a></td></tr>
-            <tr><td>UK CAA Register</td><td>UK approved MRO organisations</td><td>Quarterly</td><td><a href="https://www.caa.co.uk" target="_blank">caa.co.uk</a></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card">
-        <div class="card-title">Data integrity policy</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.7">Every data point in every report is labeled either <span class="verified">✓ verified</span> (traceable to a named public source) or <span class="unverified">! check source</span> (requires manual confirmation before use in deal materials). Competitor names are never auto-populated unless confirmed from the FAA Part 145 database or UK CAA register. This policy is enforced in the AI prompt and cannot be overridden.</p>
-      </div>
-    </div>
-
-    <!-- ABOUT -->
-    <div id="panel-about" class="panel">
-      <div class="page-title">About this system</div>
-      <div class="page-sub">How the autonomous report system works.</div>
-      <div class="card">
-        <div class="card-title">Architecture</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:.75rem">Every Monday at 6 AM ET, a GitHub Actions scheduler automatically runs a script that calls Google's Gemini AI for all 22 locations. Each report is saved to a Supabase database. This website reads from that database and shows you the latest reports — no manual action needed, ever.</p>
-        <table class="tbl">
-          <thead><tr><th>Component</th><th>What it does</th><th>Service</th></tr></thead>
-          <tbody>
-            <tr><td>Scheduler</td><td>Runs every Monday at 6 AM ET automatically</td><td>GitHub Actions</td></tr>
-            <tr><td>AI Engine</td><td>Generates structured reports per location</td><td>Google Gemini 2.0</td></tr>
-            <tr><td>Database</td><td>Stores all reports permanently</td><td>Supabase</td></tr>
-            <tr><td>Website</td><td>This page — reads and displays reports</td><td>Vercel</td></tr>
+            <tr><td>FAA ATADS (aspm.faa.gov)</td><td>Annual operations, ground delays</td><td>Monthly</td></tr>
+            <tr><td>BTS T-100 (transtats.bts.gov)</td><td>Passenger traffic by airport</td><td>Monthly</td></tr>
+            <tr><td>EIA (api.eia.gov)</td><td>Jet-A fuel price index</td><td>Weekly</td></tr>
+            <tr><td>FAA Part 145 DB (av-info.faa.gov)</td><td>Verified MRO operators by airport</td><td>Continuous</td></tr>
+            <tr><td>BLS OES (api.bls.gov)</td><td>A&P mechanic labor costs</td><td>Monthly</td></tr>
+            <tr><td>GAMA (gama.aero)</td><td>Bizav shipments & activity</td><td>Quarterly</td></tr>
+            <tr><td>AIN / Aviation Week RSS</td><td>Industry headlines & deals</td><td>Daily</td></tr>
+            <tr><td>UK CAA (caa.co.uk)</td><td>UK approved MRO organisations</td><td>Quarterly</td></tr>
           </tbody>
         </table>
       </div>
@@ -189,60 +219,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <script>
-// ============================================================
-// CONFIG — Vercel injects these at build time
-// These placeholders are replaced during deployment
-// ============================================================
 const CONDOR_DB_URL = 'https://phgoiezfrmlvszyoypvw.supabase.co';
 const CONDOR_DB_KEY = 'sb_publishable_mzGA23ZJc44Co7FtFPBU9g_EpqY-kLc';
 
-// ============================================================
-// Load Supabase client from CDN
-// ============================================================
 const sbScript = document.createElement('script');
 sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
 sbScript.onload = () => initApp();
-sbScript.onerror = () => showError('Could not load Supabase library. Check internet connection.');
+sbScript.onerror = () => showError('Could not load database library.');
 document.head.appendChild(sbScript);
 
 let dbClient;
 let allReports = [];
+let currentFilter = 'all';
 
 function initApp() {
   dbClient = window.supabase.createClient(CONDOR_DB_URL, CONDOR_DB_KEY);
-  loadReports();
-  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   setNextRun();
+  loadReports();
 }
 
-// ============================================================
-// Load reports from Supabase
-// ============================================================
 async function loadReports() {
   try {
-    const { data, error } = await dbClient
-      .from('reports')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(500);
-
+    const { data, error } = await dbClient.from('reports').select('*').order('created_at',{ascending:false}).limit(1000);
     if (error) throw error;
-
     allReports = data || [];
     document.getElementById('load-alert').style.display = 'none';
     document.getElementById('conn-status').textContent = 'Connected ✓';
     document.getElementById('m-total').textContent = allReports.length;
-
     if (allReports.length > 0) {
       const last = allReports[0];
       document.getElementById('m-last').textContent = new Date(last.created_at).toLocaleDateString();
       document.getElementById('m-last-loc').textContent = `${last.location_name} (${last.location_code})`;
     }
-
     renderDashboard();
+    renderSummary();
     renderArchive('all');
-
-  } catch (err) {
+  } catch(err) {
     showError(err.message);
   }
 }
@@ -255,158 +268,237 @@ function showError(msg) {
 }
 
 // ============================================================
-// Dashboard: latest report per location (most recent week)
+// DASHBOARD
 // ============================================================
 function renderDashboard() {
   const seen = new Set();
-  const latest = allReports.filter(r => {
-    if (seen.has(r.location_code)) return false;
-    seen.add(r.location_code);
-    return true;
-  });
-
-  const grid = document.getElementById('latest-grid');
-  if (latest.length === 0) {
-    grid.innerHTML = '<p style="font-size:13px;color:var(--text3);padding:.5rem 0">No reports generated yet. The system runs every Monday automatically.</p>';
-    return;
-  }
-
+  const latest = allReports.filter(r => { if(seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
+  const grid = document.getElementById('dash-grid');
+  if (!latest.length) { grid.innerHTML = '<p style="font-size:13px;color:var(--text3)">No reports yet.</p>'; return; }
   grid.innerHTML = latest.map(r => {
-    const d = r.report_json || {};
-    const es = d.executive_summary || {};
-    return `<div class="archive-item" onclick="viewReport('${r.id}','dashboard-view')">
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:600">${esc(r.location_name)} <span style="color:var(--text3);font-weight:400">(${esc(r.location_code)})</span></div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">${esc(r.city)} · ${esc(r.facility_type)} · ${esc(r.week_label || r.report_date)}</div>
-        ${es.market_context ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5">${esc(es.market_context.slice(0, 120))}...</div>` : ''}
-      </div>
-      <span class="badge badge-green">View</span>
+    const es = (r.report_json||{}).executive_summary || {};
+    const preview = es.market_context || es.strategic_outlook || '';
+    return `<div class="dash-card" onclick="showReportInDash('${r.id}')">
+      <div class="dash-card-title">${esc(r.location_name)} <span style="color:var(--text3);font-weight:400;font-size:11px">${esc(r.location_code)}</span></div>
+      <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)}</div>
+      ${preview ? `<div class="dash-card-preview">${esc(preview)}</div>` : ''}
     </div>`;
   }).join('');
+}
 
-  if (!document.getElementById('dashboard-view')) {
-    const el = document.createElement('div');
-    el.id = 'dashboard-view';
-    el.style.marginTop = '1.5rem';
-    document.getElementById('panel-dashboard').appendChild(el);
-  }
+function showReportInDash(id) {
+  const r = allReports.find(r => String(r.id) === String(id));
+  if (!r) return;
+  const view = document.getElementById('dash-report-view');
+  view.style.display = 'block';
+  view.innerHTML = `<button class="back-btn" onclick="document.getElementById('dash-report-view').style.display='none'">← Back to dashboard</button>` + renderReportHTML(r);
+  view.scrollIntoView({behavior:'smooth'});
 }
 
 // ============================================================
-// Archive
+// WEEKLY SUMMARY
+// ============================================================
+function renderSummary() {
+  const container = document.getElementById('summary-content');
+  if (!allReports.length) { container.innerHTML = '<p style="font-size:13px;color:var(--text3)">No reports available yet.</p>'; return; }
+
+  // Get latest report per location
+  const seen = new Set();
+  const latest = allReports.filter(r => { if(seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
+  const weekLabel = latest[0]?.week_label || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  // Split US and UK
+  const us = latest.filter(r => r.country === 'US');
+  const uk = latest.filter(r => r.country === 'UK');
+
+  const renderLocSummary = (r) => {
+    const es = (r.report_json||{}).executive_summary || {};
+    const kpis = (r.report_json||{}).kpi_table || [];
+    const position = kpis.find(k => k.field === 'Signature Position')?.value || '';
+    const rank = kpis.find(k => k.field === 'Positional Ranking')?.value || '';
+    const signals = (r.report_json||{}).market_signals || [];
+    const topSignal = signals[0];
+    const outlook = es.strategic_outlook || '';
+    const hasInfo = outlook || position || topSignal;
+    if (!hasInfo) return `<div class="summary-row"><div class="summary-loc">${esc(r.location_code)}</div><div class="summary-text" style="color:var(--text3)">No new information found on ${esc(r.location_name)} this week.</div></div>`;
+    let text = '';
+    if (position) text += `Position: <strong>${esc(position)}</strong>${rank ? ` (${esc(rank)})` : ''}. `;
+    if (outlook) text += esc(outlook);
+    if (topSignal) text += ` <em>${esc(topSignal.signal)}</em>`;
+    return `<div class="summary-row"><div class="summary-loc">${esc(r.location_code)}</div><div class="summary-text">${text}</div></div>`;
+  };
+
+  container.innerHTML = `
+    <div class="summary-hero">
+      <h2>Week of ${esc(weekLabel)}</h2>
+      <p>Combined market intelligence — ${latest.length} locations across US and UK/EMEA. Generated automatically every Monday at 6 AM ET via Perplexity live web search.</p>
+    </div>
+    <div class="summary-section">
+      <h3>🇺🇸 United States — ${us.length} locations</h3>
+      ${us.map(renderLocSummary).join('')}
+    </div>
+    <div class="summary-section">
+      <h3>🇬🇧 UK / EMEA — ${uk.length} locations</h3>
+      ${uk.map(renderLocSummary).join('')}
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:8px">
+      <button class="btn" onclick="window.print()">🖨 Print summary</button>
+    </div>`;
+}
+
+// ============================================================
+// ARCHIVE — folder per week
 // ============================================================
 function renderArchive(filter) {
-  const list = document.getElementById('archive-list');
-  let filtered = allReports;
-  if (filter === 'US') filtered = allReports.filter(r => r.country === 'US');
-  else if (filter === 'UK') filtered = allReports.filter(r => r.country === 'UK');
-  else if (filter === 'TECHNICair') filtered = allReports.filter(r => r.facility_type?.includes('TECHNICair'));
-  else if (filter === 'FBO') filtered = allReports.filter(r => r.facility_type?.includes('FBO') || r.facility_type?.includes('Line'));
+  currentFilter = filter;
+  let reports = allReports;
+  if (filter === 'US') reports = allReports.filter(r => r.country === 'US');
+  else if (filter === 'UK') reports = allReports.filter(r => r.country === 'UK');
+  else if (filter === 'TECHNICair') reports = allReports.filter(r => r.facility_type?.includes('TECHNICair'));
+  else if (filter === 'FBO') reports = allReports.filter(r => r.facility_type?.includes('FBO') || r.facility_type?.includes('Line'));
 
-  if (filtered.length === 0) {
-    list.innerHTML = '<p style="font-size:13px;color:var(--text3);padding:.5rem 0">No reports match this filter.</p>';
-    return;
-  }
+  // Group by week (report_date)
+  const weeks = {};
+  reports.forEach(r => {
+    const key = r.report_date || r.created_at?.slice(0,10) || 'Unknown';
+    if (!weeks[key]) weeks[key] = [];
+    weeks[key].push(r);
+  });
 
-  list.innerHTML = filtered.map(r => `
-    <div class="archive-item" onclick="viewReport('${r.id}','archive-report')">
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:600">${esc(r.location_name)} (${esc(r.location_code)})</div>
-        <div style="font-size:11px;color:var(--text3)">${esc(r.city)} · ${esc(r.week_label || r.report_date)} · Generated ${new Date(r.created_at).toLocaleString()}</div>
+  const sortedWeeks = Object.keys(weeks).sort((a,b) => b.localeCompare(a));
+  const container = document.getElementById('archive-folders');
+
+  if (!sortedWeeks.length) { container.innerHTML = '<p style="font-size:13px;color:var(--text3)">No reports match this filter.</p>'; return; }
+
+  container.innerHTML = sortedWeeks.map((week, wi) => {
+    const weekReports = weeks[week];
+    const label = weekReports[0]?.week_label || new Date(week).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    const locsHtml = weekReports.map(r => `
+      <div class="loc-item" id="loc-${wi}-${r.id}" onclick="toggleLocReport(${wi},'${r.id}')">
+        <div style="flex:1">
+          <div class="loc-name">${esc(r.location_name)}</div>
+          <div class="loc-type">${esc(r.city)} · ${esc(r.facility_type)}</div>
+        </div>
+        <span class="loc-code">${esc(r.location_code)}</span>
+        <span class="badge ${r.country==='UK'?'badge-blue':'badge-gray'}" style="margin-left:6px">${r.country}</span>
       </div>
-      <span class="badge ${r.country === 'UK' ? 'badge-blue' : 'badge-gray'}">${r.country}</span>
-    </div>`).join('');
+      <div id="report-${wi}-${r.id}" style="display:none;margin-bottom:.75rem">${renderReportHTML(r)}</div>
+    `).join('');
+
+    return `<div class="week-folder">
+      <div class="week-folder-header" id="folder-header-${wi}" onclick="toggleFolder(${wi})">
+        <div class="week-folder-title">📁 ${esc(label)}</div>
+        <div class="week-folder-meta">${weekReports.length} location${weekReports.length>1?'s':''} · click to expand</div>
+      </div>
+      <div class="week-folder-body" id="folder-body-${wi}">
+        <div class="week-summary">
+          <h4>Week summary</h4>
+          <p>${buildWeekSummary(weekReports)}</p>
+        </div>
+        ${locsHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildWeekSummary(reports) {
+  const us = reports.filter(r => r.country === 'US').length;
+  const uk = reports.filter(r => r.country === 'UK').length;
+  const positions = reports.map(r => {
+    const kpis = (r.report_json||{}).kpi_table || [];
+    return kpis.find(k => k.field === 'Signature Position')?.value || '';
+  }).filter(Boolean);
+  const dominant = positions.filter(p => p.toLowerCase().includes('dominant') || p.toLowerCase().includes('leader')).length;
+  return `${reports.length} locations covered this week — ${us} US, ${uk} UK/EMEA. Signature holds a leading or dominant position at ${dominant} of ${positions.length} locations with available data.`;
+}
+
+function toggleFolder(wi) {
+  const header = document.getElementById(`folder-header-${wi}`);
+  const body = document.getElementById(`folder-body-${wi}`);
+  const isOpen = body.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+  if (!isOpen) header.querySelector('.week-folder-meta').textContent = `${body.querySelectorAll('.loc-item').length} locations · click to collapse`;
+}
+
+function toggleLocReport(wi, id) {
+  const reportEl = document.getElementById(`report-${wi}-${id}`);
+  const locEl = document.getElementById(`loc-${wi}-${id}`);
+  const isOpen = reportEl.style.display !== 'none';
+  reportEl.style.display = isOpen ? 'none' : 'block';
+  locEl.classList.toggle('active', !isOpen);
+  if (!isOpen) reportEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function filterArchive(filter, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderArchive(filter);
-  document.getElementById('archive-report').style.display = 'none';
 }
 
 // ============================================================
-// View a single report
+// REPORT RENDERER — clean, no status flags
 // ============================================================
-function viewReport(id, containerId) {
-  const r = allReports.find(r => String(r.id) === String(id));
-  if (!r) return;
-  document.querySelectorAll('.archive-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget?.classList.add('active');
-
-  const container = document.getElementById(containerId);
-  container.style.display = 'block';
-  container.innerHTML = renderReportHTML(r.report_json || {}, r);
-  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function renderReportHTML(d, row) {
+function renderReportHTML(r) {
+  const d = r.report_json || {};
   const es = d.executive_summary || {};
   const kpis = d.kpi_table || [];
   const signals = d.market_signals || [];
   const gaps = d.data_gaps || [];
   const sources = d.sources_cited || [];
 
-  const kpiRows = kpis.map(k => {
-    const v = k.verified
-      ? `<span class="verified">✓ verified</span>`
-      : `<span class="unverified">! check source</span>`;
-    return `<tr>
-      <td style="font-weight:500;color:var(--text2);white-space:nowrap">${esc(k.field)}</td>
-      <td>${esc(k.value)}</td>
-      <td style="color:var(--text3);font-size:11px">${esc(k.source||'—')}</td>
-      <td>${v}</td>
-    </tr>`;
-  }).join('');
+  const kpiHtml = kpis.map(k => `
+    <div class="kpi-item">
+      <div class="kpi-label">${esc(k.field)}</div>
+      <div class="kpi-value">${esc(k.value) || '<span style="color:var(--text3)">Not available</span>'}</div>
+      ${k.source && k.source !== 'Internal' ? `<div class="kpi-source">${esc(k.source)}</div>` : ''}
+    </div>`).join('');
 
-  const signalHTML = signals.map(s => {
-    const cls = s.direction==='positive'?'badge-green':s.direction==='negative'?'badge-red':'badge-gray';
-    return `<div class="signal">
-      <span class="badge ${cls}" style="flex-shrink:0;margin-top:2px">${esc(s.direction)}</span>
-      <div><div style="font-size:13px;font-weight:500">${esc(s.signal)}</div><div style="font-size:12px;color:var(--text2)">${esc(s.detail)} <span style="color:var(--text3)">[${esc(s.source||'—')}]</span></div></div>
+  const signalHtml = signals.map(s => {
+    const cls = s.direction==='positive'?'dir-positive':s.direction==='negative'?'dir-negative':'dir-neutral';
+    return `<div class="signal-item">
+      <span class="signal-dir ${cls}">${esc(s.direction)}</span>
+      <div>
+        <div class="signal-text">${esc(s.signal)}</div>
+        <div class="signal-detail">${esc(s.detail)}${s.source?` · <em>${esc(s.source)}</em>`:''}</div>
+      </div>
     </div>`;
   }).join('');
 
-  const gapHTML = gaps.map(g => `<li style="font-size:12px;color:var(--amber-text);margin-bottom:2px">${esc(g)}</li>`).join('');
-  const srcHTML = sources.map(s => `<span class="source-chip">${esc(s)}</span>`).join('');
+  const gapsFiltered = gaps.filter(g => g && !g.toLowerCase().includes('no information') && g.length > 5);
+  const gapHtml = gapsFiltered.length ? `
+    <div class="card" style="border-left:3px solid var(--amber);margin-top:.75rem">
+      <div class="card-title" style="color:var(--amber-text)">Requires manual verification</div>
+      <ul style="padding-left:1.25rem">${gapsFiltered.map(g=>`<li style="font-size:12px;color:var(--text2);margin-bottom:3px">${esc(g)}</li>`).join('')}</ul>
+    </div>` : '';
 
-  return `<div>
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
-      <div>
-        <div style="font-size:18px;font-weight:700">${esc(d.location_name||'')} <span style="color:var(--text3);font-weight:400">(${esc(d.location_code||'')})</span></div>
-        <div style="font-size:12px;color:var(--text2)">${esc(d.city||'')} · ${esc(d.facility_type||'')} · ${esc(d.week_label||d.report_date||'')}</div>
-      </div>
-      <button class="btn" onclick="window.print()">🖨 Print</button>
+  const srcHtml = sources.length ? sources.map(s=>`<span class="source-chip">${esc(s)}</span>`).join('') : '';
+
+  return `<div class="report-view">
+    <div class="report-header">
+      <div class="report-title">${esc(d.location_name||r.location_name||'')} <span style="color:var(--text3);font-weight:400;font-size:14px">(${esc(d.location_code||r.location_code||'')})</span></div>
+      <div class="report-meta">${esc(d.city||r.city||'')} · ${esc(d.facility_type||r.facility_type||'')} · ${esc(d.week_label||d.report_date||'')}</div>
     </div>
 
     <div class="card">
       <div class="card-title">Executive summary</div>
-      <div class="summary-block"><h4>Market context</h4><p>${esc(es.market_context||'—')}</p></div>
-      <div class="summary-block"><h4>Competitive landscape</h4><p>${esc(es.competitive_landscape||'—')}</p></div>
-      <div class="summary-block" style="margin-bottom:0"><h4>Strategic outlook for acquirer</h4><p>${esc(es.strategic_outlook||'—')}</p></div>
+      ${es.market_context ? `<div style="margin-bottom:.75rem"><div class="section-title">Market context</div><p style="font-size:13px;line-height:1.7">${esc(es.market_context)}</p></div>` : ''}
+      ${es.competitive_landscape ? `<div style="margin-bottom:.75rem"><div class="section-title">Competitive landscape</div><p style="font-size:13px;line-height:1.7">${esc(es.competitive_landscape)}</p></div>` : ''}
+      ${es.strategic_outlook ? `<div><div class="section-title">Strategic outlook</div><p style="font-size:13px;line-height:1.7">${esc(es.strategic_outlook)}</p></div>` : ''}
     </div>
 
-    <div class="card">
-      <div class="card-title">Market KPI table</div>
-      <div style="overflow-x:auto">
-        <table class="tbl">
-          <thead><tr><th>KPI</th><th>Value</th><th>Source</th><th>Status</th></tr></thead>
-          <tbody>${kpiRows}</tbody>
-        </table>
-      </div>
-    </div>
-
-    ${signals.length ? `<div class="card"><div class="card-title">Market signals</div>${signalHTML}</div>` : ''}
-    ${gaps.length ? `<div class="card"><div class="card-title" style="color:var(--amber-text)">⚠ Data gaps — manual input required</div><ul style="padding-left:1.25rem;margin-top:.5rem">${gapHTML}</ul></div>` : ''}
-    <div class="card" style="background:var(--surface2)"><div class="card-title" style="font-size:12px;color:var(--text3)">Sources cited</div><div style="margin-top:.5rem">${srcHTML||'<span style="color:var(--text3);font-size:12px">None listed</span>'}</div></div>
+    ${kpis.length ? `<div class="card"><div class="card-title">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
+    ${signals.length ? `<div class="card"><div class="card-title">Market signals</div>${signalHtml}</div>` : ''}
+    ${gapHtml}
+    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title">Sources cited</div>${srcHtml}</div>` : ''}
   </div>`;
 }
 
 // ============================================================
-// Utilities
+// UTILITIES
 // ============================================================
 function esc(s) {
-  if (s == null) return '';
+  if (s==null) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function nav(id) {
@@ -414,15 +506,14 @@ function nav(id) {
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   document.querySelector(`[onclick="nav('${id}')"]`).classList.add('active');
-  if (id==='archive') renderArchive('all');
 }
 function setNextRun() {
   const now = new Date();
   const next = new Date(now);
   next.setUTCHours(11,0,0,0);
   const day = next.getUTCDay();
-  const daysUntilMonday = day===1 && now<next ? 0 : (8-day)%7||7;
-  next.setUTCDate(next.getUTCDate() + daysUntilMonday);
+  const d = day===1 && now<next ? 0 : (8-day)%7||7;
+  next.setUTCDate(next.getUTCDate()+d);
   document.getElementById('m-next').textContent = next.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
 </script>
