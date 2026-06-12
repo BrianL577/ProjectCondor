@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Condor Market Intelligence</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f9f8f6;--surface:#fff;--surface2:#f2f1ee;--border:#e5e3de;--border2:#d0cec8;
+  --text:#1a1916;--text2:#6b6963;--text3:#9b9892;
+  --blue:#1a6db5;--blue-bg:#e8f0f9;--blue-text:#0d4a82;
+  --green:#1a7a45;--green-bg:#e6f4ec;--green-text:#0f5530;
+  --amber:#a05e0a;--amber-bg:#fdf0dc;--amber-text:#7a4708;
+  --red:#b52020;--red-bg:#faeaea;--red-text:#821515;
+  --r:10px;--rs:6px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{width:256px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;padding:2rem;max-width:1000px}
+.sidebar-header{padding:1.25rem;border-bottom:1px solid var(--border)}
+.logo{font-size:15px;font-weight:600}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.nav{padding:.5rem 0;flex:1}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:.5rem 1.25rem .25rem}
+.nav-item{display:flex;align-items:center;gap:8px;padding:.45rem 1.25rem;cursor:pointer;font-size:13px;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s;border-radius:0}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--blue-bg);color:var(--blue-text);font-weight:500}
+.sidebar-foot{padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin-right:5px}
+.panel{display:none}.panel.active{display:block}
+.page-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem}
+.metric-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:600}
+.metric-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:14px;font-weight:600;margin-bottom:.75rem}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500}
+.badge-blue{background:var(--blue-bg);color:var(--blue-text)}
+.badge-green{background:var(--green-bg);color:var(--green-text)}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text)}
+.badge-red{background:var(--red-bg);color:var(--red-text)}
+.badge-gray{background:var(--surface2);color:var(--text2)}
+.alert{padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:flex-start;margin-bottom:1rem}
+.alert-amber{background:var(--amber-bg);border:1px solid #f0c070;color:var(--amber-text)}
+.alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text)}
+.alert-red{background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2);white-space:nowrap}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--surface2)}
+.verified{color:var(--green-text);font-size:10px;padding:1px 5px;border-radius:3px;background:var(--green-bg)}
+.unverified{color:var(--amber-text);font-size:10px;padding:1px 5px;border-radius:3px;background:var(--amber-bg)}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.archive-item{display:flex;align-items:center;gap:12px;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:.5rem;cursor:pointer;background:var(--surface);transition:background .12s}
+.archive-item:hover{background:var(--surface2)}
+.archive-item.active{border-color:var(--blue);background:var(--blue-bg)}
+.sel{width:100%;padding:8px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px}
+.sel:focus{outline:none;border-color:var(--blue)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
+.btn:hover{background:var(--surface2)}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-blue:hover{background:var(--blue-text);border-color:var(--blue-text)}
+.summary-block{margin-bottom:1rem}
+.summary-block h4{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.05em}
+.summary-block p{font-size:13px;color:var(--text);line-height:1.7}
+.signal{display:flex;gap:10px;padding:.5rem 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.signal:last-child{border-bottom:none}
+.source-chip{display:inline-block;font-size:10px;padding:2px 6px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);margin:2px}
+.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;transition:all .12s}
+.filter-btn:hover{background:var(--surface2)}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+@media(max-width:680px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:static;flex-direction:row;overflow-x:auto}
+  .sidebar-header,.sidebar-foot,.nav-label{display:none}
+  .nav{display:flex;flex-direction:row;padding:.5rem;gap:4px}
+  .nav-item{white-space:nowrap;padding:.4rem .75rem;border-radius:var(--rs)}
+  .main{padding:1rem}
+}
+@media print{.sidebar,.filter-bar,.btn{display:none!important}.main{padding:.5rem}}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">✈️ Condor Intelligence</div>
+      <div class="logo-sub">Signature Aviation MRO Portfolio</div>
+    </div>
+    <div class="nav">
+      <div class="nav-label">Reports</div>
+      <button class="nav-item active" onclick="nav('dashboard')">📊 Dashboard</button>
+      <button class="nav-item" onclick="nav('archive')">🗂 Report archive</button>
+      <div class="nav-label" style="margin-top:.5rem">Info</div>
+      <button class="nav-item" onclick="nav('sources')">🔗 Data sources</button>
+      <button class="nav-item" onclick="nav('about')">ℹ About</button>
+    </div>
+    <div class="sidebar-foot"><span class="dot"></span><span id="conn-status">Connecting...</span></div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="page-title">Weekly Market Intelligence</div>
+      <div class="page-sub" id="dash-date">Loading...</div>
+      <div id="load-alert" class="alert alert-blue"><span class="spinner"></span> Loading latest reports from database...</div>
+      <div id="err-alert" class="alert alert-red" style="display:none">⚠ Could not connect to database. <span id="err-msg"></span></div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">22</div><div class="metric-sub">US + UK/EMEA</div></div>
+        <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
+        <div class="metric"><div class="metric-label">Last generated</div><div class="metric-value" id="m-last" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub" id="m-last-loc">—</div></div>
+        <div class="metric"><div class="metric-label">Next auto-run</div><div class="metric-value" id="m-next" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub">Monday 6 AM ET</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Latest reports — this week</div>
+        <div id="latest-grid"></div>
+      </div>
+    </div>
+
+    <!-- ARCHIVE -->
+    <div id="panel-archive" class="panel">
+      <div class="page-title">Report archive</div>
+      <div class="page-sub">All weekly reports, stored permanently. Filter by location or region.</div>
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" onclick="filterArchive('all',this)">All</button>
+        <button class="filter-btn" onclick="filterArchive('US',this)">🇺🇸 US</button>
+        <button class="filter-btn" onclick="filterArchive('UK',this)">🇬🇧 UK</button>
+        <button class="filter-btn" onclick="filterArchive('TECHNICair',this)">TECHNICair</button>
+        <button class="filter-btn" onclick="filterArchive('FBO',this)">FBO/MRO</button>
+      </div>
+      <div id="archive-list"></div>
+      <div id="archive-report" style="margin-top:1.5rem;display:none"></div>
+    </div>
+
+    <!-- SOURCES -->
+    <div id="panel-sources" class="panel">
+      <div class="page-title">Data sources</div>
+      <div class="page-sub">Every report cites verified, publicly updated sources. Claims that cannot be verified are explicitly flagged.</div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th><th>URL</th></tr></thead>
+          <tbody>
+            <tr><td>FAA ATADS</td><td>Annual operations, ground delays</td><td>Monthly</td><td><a href="https://aspm.faa.gov" target="_blank">aspm.faa.gov</a></td></tr>
+            <tr><td>BTS T-100</td><td>Passenger traffic by airport</td><td>Monthly</td><td><a href="https://transtats.bts.gov" target="_blank">transtats.bts.gov</a></td></tr>
+            <tr><td>EIA Fuel Data</td><td>Jet-A price index (weekly)</td><td>Weekly</td><td><a href="https://api.eia.gov" target="_blank">api.eia.gov</a></td></tr>
+            <tr><td>FAA Part 145 DB</td><td>Verified MRO operators by airport</td><td>Continuous</td><td><a href="https://av-info.faa.gov" target="_blank">av-info.faa.gov</a></td></tr>
+            <tr><td>BLS OES</td><td>A&P mechanic labor costs</td><td>Monthly</td><td><a href="https://api.bls.gov" target="_blank">api.bls.gov</a></td></tr>
+            <tr><td>GAMA</td><td>Bizav shipments & activity</td><td>Quarterly</td><td><a href="https://gama.aero" target="_blank">gama.aero</a></td></tr>
+            <tr><td>AIN / Aviation Week RSS</td><td>Industry headlines & deals</td><td>Daily</td><td><a href="https://www.ainonline.com" target="_blank">ainonline.com</a></td></tr>
+            <tr><td>UK CAA Register</td><td>UK approved MRO organisations</td><td>Quarterly</td><td><a href="https://www.caa.co.uk" target="_blank">caa.co.uk</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Data integrity policy</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">Every data point in every report is labeled either <span class="verified">✓ verified</span> (traceable to a named public source) or <span class="unverified">! check source</span> (requires manual confirmation before use in deal materials). Competitor names are never auto-populated unless confirmed from the FAA Part 145 database or UK CAA register. This policy is enforced in the AI prompt and cannot be overridden.</p>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="panel-about" class="panel">
+      <div class="page-title">About this system</div>
+      <div class="page-sub">How the autonomous report system works.</div>
+      <div class="card">
+        <div class="card-title">Architecture</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:.75rem">Every Monday at 6 AM ET, a GitHub Actions scheduler automatically runs a script that calls Google's Gemini AI for all 22 locations. Each report is saved to a Supabase database. This website reads from that database and shows you the latest reports — no manual action needed, ever.</p>
+        <table class="tbl">
+          <thead><tr><th>Component</th><th>What it does</th><th>Service</th></tr></thead>
+          <tbody>
+            <tr><td>Scheduler</td><td>Runs every Monday at 6 AM ET automatically</td><td>GitHub Actions</td></tr>
+            <tr><td>AI Engine</td><td>Generates structured reports per location</td><td>Google Gemini 2.0</td></tr>
+            <tr><td>Database</td><td>Stores all reports permanently</td><td>Supabase</td></tr>
+            <tr><td>Website</td><td>This page — reads and displays reports</td><td>Vercel</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — Vercel injects these at build time
+// These placeholders are replaced during deployment
+// ============================================================
+const SUPABASE_URL = window.SUPABASE_URL || '__SUPABASE_URL__';
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '__SUPABASE_ANON_KEY__';
+
+// ============================================================
+// Load Supabase client from CDN
+// ============================================================
+const script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+script.onload = () => initApp();
+script.onerror = () => showError('Could not load Supabase library. Check internet connection.');
+document.head.appendChild(script);
+
+let supabase;
+let allReports = [];
+
+function initApp() {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  loadReports();
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  setNextRun();
+}
+
+// ============================================================
+// Load reports from Supabase
+// ============================================================
+async function loadReports() {
+  try {
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(500);
+
+    if (error) throw error;
+
+    allReports = data || [];
+    document.getElementById('load-alert').style.display = 'none';
+    document.getElementById('conn-status').textContent = 'Connected ✓';
+    document.getElementById('m-total').textContent = allReports.length;
+
+    if (allReports.length > 0) {
+      const last = allReports[0];
+      document.getElementById('m-last').textContent = new Date(last.created_at).toLocaleDateString();
+      document.getElementById('m-last-loc').textContent = `${last.location_name} (${last.location_code})`;
+    }
+
+    renderDashboard();
+    renderArchive('all');
+
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('load-alert').style.display = 'none';
+  document.getElementById('err-alert').style.display = 'flex';
+  document.getElementById('err-msg').textContent = msg;
+  document.getElementById('conn-status').textContent = 'Connection failed';
+}
+
+// ============================================================
+// Dashboard: latest report per location (most recent week)
+// ============================================================
+function renderDashboard() {
+  const seen = new Set();
+  const latest = allReports.filter(r => {
+    if (seen.has(r.location_code)) return false;
+    seen.add(r.location_code);
+    return true;
+  });
+
+  const grid = document.getElementById('latest-grid');
+  if (latest.length === 0) {
+    grid.innerHTML = '<p style="font-size:13px;color:var(--text3);padding:.5rem 0">No reports generated yet. The system runs every Monday automatically.</p>';
+    return;
+  }
+
+  grid.innerHTML = latest.map(r => {
+    const d = r.report_json || {};
+    const es = d.executive_summary || {};
+    return `<div class="archive-item" onclick="viewReport('${r.id}','dashboard-view')">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${esc(r.location_name)} <span style="color:var(--text3);font-weight:400">(${esc(r.location_code)})</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${esc(r.city)} · ${esc(r.facility_type)} · ${esc(r.week_label || r.report_date)}</div>
+        ${es.market_context ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5">${esc(es.market_context.slice(0, 120))}...</div>` : ''}
+      </div>
+      <span class="badge badge-green">View</span>
+    </div>`;
+  }).join('');
+
+  if (!document.getElementById('dashboard-view')) {
+    const el = document.createElement('div');
+    el.id = 'dashboard-view';
+    el.style.marginTop = '1.5rem';
+    document.getElementById('panel-dashboard').appendChild(el);
+  }
+}
+
+// ============================================================
+// Archive
+// ============================================================
+function renderArchive(filter) {
+  const list = document.getElementById('archive-list');
+  let filtered = allReports;
+  if (filter === 'US') filtered = allReports.filter(r => r.country === 'US');
+  else if (filter === 'UK') filtered = allReports.filter(r => r.country === 'UK');
+  else if (filter === 'TECHNICair') filtered = allReports.filter(r => r.facility_type?.includes('TECHNICair'));
+  else if (filter === 'FBO') filtered = allReports.filter(r => r.facility_type?.includes('FBO') || r.facility_type?.includes('Line'));
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p style="font-size:13px;color:var(--text3);padding:.5rem 0">No reports match this filter.</p>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(r => `
+    <div class="archive-item" onclick="viewReport('${r.id}','archive-report')">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${esc(r.location_name)} (${esc(r.location_code)})</div>
+        <div style="font-size:11px;color:var(--text3)">${esc(r.city)} · ${esc(r.week_label || r.report_date)} · Generated ${new Date(r.created_at).toLocaleString()}</div>
+      </div>
+      <span class="badge ${r.country === 'UK' ? 'badge-blue' : 'badge-gray'}">${r.country}</span>
+    </div>`).join('');
+}
+
+function filterArchive(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderArchive(filter);
+  document.getElementById('archive-report').style.display = 'none';
+}
+
+// ============================================================
+// View a single report
+// ============================================================
+function viewReport(id, containerId) {
+  const r = allReports.find(r => String(r.id) === String(id));
+  if (!r) return;
+  document.querySelectorAll('.archive-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget?.classList.add('active');
+
+  const container = document.getElementById(containerId);
+  container.style.display = 'block';
+  container.innerHTML = renderReportHTML(r.report_json || {}, r);
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderReportHTML(d, row) {
+  const es = d.executive_summary || {};
+  const kpis = d.kpi_table || [];
+  const signals = d.market_signals || [];
+  const gaps = d.data_gaps || [];
+  const sources = d.sources_cited || [];
+
+  const kpiRows = kpis.map(k => {
+    const v = k.verified
+      ? `<span class="verified">✓ verified</span>`
+      : `<span class="unverified">! check source</span>`;
+    return `<tr>
+      <td style="font-weight:500;color:var(--text2);white-space:nowrap">${esc(k.field)}</td>
+      <td>${esc(k.value)}</td>
+      <td style="color:var(--text3);font-size:11px">${esc(k.source||'—')}</td>
+      <td>${v}</td>
+    </tr>`;
+  }).join('');
+
+  const signalHTML = signals.map(s => {
+    const cls = s.direction==='positive'?'badge-green':s.direction==='negative'?'badge-red':'badge-gray';
+    return `<div class="signal">
+      <span class="badge ${cls}" style="flex-shrink:0;margin-top:2px">${esc(s.direction)}</span>
+      <div><div style="font-size:13px;font-weight:500">${esc(s.signal)}</div><div style="font-size:12px;color:var(--text2)">${esc(s.detail)} <span style="color:var(--text3)">[${esc(s.source||'—')}]</span></div></div>
+    </div>`;
+  }).join('');
+
+  const gapHTML = gaps.map(g => `<li style="font-size:12px;color:var(--amber-text);margin-bottom:2px">${esc(g)}</li>`).join('');
+  const srcHTML = sources.map(s => `<span class="source-chip">${esc(s)}</span>`).join('');
+
+  return `<div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:18px;font-weight:700">${esc(d.location_name||'')} <span style="color:var(--text3);font-weight:400">(${esc(d.location_code||'')})</span></div>
+        <div style="font-size:12px;color:var(--text2)">${esc(d.city||'')} · ${esc(d.facility_type||'')} · ${esc(d.week_label||d.report_date||'')}</div>
+      </div>
+      <button class="btn" onclick="window.print()">🖨 Print</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Executive summary</div>
+      <div class="summary-block"><h4>Market context</h4><p>${esc(es.market_context||'—')}</p></div>
+      <div class="summary-block"><h4>Competitive landscape</h4><p>${esc(es.competitive_landscape||'—')}</p></div>
+      <div class="summary-block" style="margin-bottom:0"><h4>Strategic outlook for acquirer</h4><p>${esc(es.strategic_outlook||'—')}</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Market KPI table</div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>KPI</th><th>Value</th><th>Source</th><th>Status</th></tr></thead>
+          <tbody>${kpiRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    ${signals.length ? `<div class="card"><div class="card-title">Market signals</div>${signalHTML}</div>` : ''}
+    ${gaps.length ? `<div class="card"><div class="card-title" style="color:var(--amber-text)">⚠ Data gaps — manual input required</div><ul style="padding-left:1.25rem;margin-top:.5rem">${gapHTML}</ul></div>` : ''}
+    <div class="card" style="background:var(--surface2)"><div class="card-title" style="font-size:12px;color:var(--text3)">Sources cited</div><div style="margin-top:.5rem">${srcHTML||'<span style="color:var(--text3);font-size:12px">None listed</span>'}</div></div>
+  </div>`;
+}
+
+// ============================================================
+// Utilities
+// ============================================================
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function nav(id) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelector(`[onclick="nav('${id}')"]`).classList.add('active');
+  if (id==='archive') renderArchive('all');
+}
+function setNextRun() {
+  const now = new Date();
+  const next = new Date(now);
+  next.setUTCHours(11,0,0,0);
+  const day = next.getUTCDay();
+  const daysUntilMonday = day===1 && now<next ? 0 : (8-day)%7||7;
+  next.setUTCDate(next.getUTCDate() + daysUntilMonday);
+  document.getElementById('m-next').textContent = next.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+</script>
+</body>
+</html>
