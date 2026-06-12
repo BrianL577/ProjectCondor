@@ -1,21 +1,9 @@
 name: Weekly Market Intelligence Reports
 
-# Runs every Monday at 11:00 AM UTC (6:00 AM ET / 7:00 AM ET DST)
 on:
   schedule:
     - cron: '0 11 * * 1'
-
-  # Also allows you to trigger it manually from GitHub's website at any time
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Dry run (generate but do not save to database)'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - 'false'
-          - 'true'
 
 jobs:
   generate-reports:
@@ -39,17 +27,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: |
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            node scripts/generate.js --dry-run
-          else
-            node scripts/generate.js
-          fi
+        run: node scripts/generate.js
 
       - name: Report success
         if: success()
-        run: echo "✓ All reports generated and saved successfully — $(date)"
-
-      - name: Report failure
-        if: failure()
-        run: echo "✗ Report generation failed — check logs above"
+        run: echo "All reports generated successfully"
