@@ -205,11 +205,11 @@ script.onload = () => initApp();
 script.onerror = () => showError('Could not load Supabase library. Check internet connection.');
 document.head.appendChild(script);
 
-let supabase;
+let dbClient;
 let allReports = [];
 
 function initApp() {
-  supabase = window.supabase.createClient(CONDOR_DB_URL, CONDOR_DB_KEY);
+  dbClient = window.supabase.createClient(CONDOR_DB_URL, CONDOR_DB_KEY);
   loadReports();
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
   setNextRun();
@@ -220,7 +220,7 @@ function initApp() {
 // ============================================================
 async function loadReports() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await dbClient
       .from('reports')
       .select('*')
       .order('created_at', { ascending: false })
