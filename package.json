@@ -2,6 +2,7 @@
   "name": "condor-market-intelligence",
   "version": "1.0.0",
   "description": "Autonomous weekly aviation market reports for Project Condor",
+  "type": "module",
   "scripts": {
     "generate": "node scripts/generate.js",
     "dev": "node scripts/generate.js --dry-run"
