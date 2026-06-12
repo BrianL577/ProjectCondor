@@ -35,72 +35,65 @@ function buildEmailHTML(reports) {
   const us = reports.filter(r => r.country === 'US');
   const uk = reports.filter(r => r.country === 'UK');
 
-  const renderRow = (r) => {
-    const es = (r.report_json || {}).executive_summary || {};
-    const kpis = (r.report_json || {}).kpi_table || [];
-    const position = kpis.find(k => k.field === 'Signature Position')?.value || '';
-    const rank = kpis.find(k => k.field === 'Positional Ranking')?.value || '';
-    const signals = (r.report_json || {}).market_signals || [];
-    const topSignal = signals[0];
-    const outlook = es.strategic_outlook || '';
-    const hasInfo = outlook || position || topSignal;
+  // Build paragraph 1 — US overview
+  const usLeaders = us.filter(r => {
+    const kpis = (r.report_json||{}).kpi_table || [];
+    const pos = kpis.find(k => k.field === 'Signature Position')?.value || '';
+    return pos.toLowerCase().includes('dominant') || pos.toLowerCase().includes('leader');
+  }).map(r => r.location_code);
 
-    if (!hasInfo) {
-      return `<tr>
-        <td style="padding:8px 12px;font-weight:600;font-family:monospace;font-size:12px;color:#6b6963;vertical-align:top;white-space:nowrap;border-bottom:1px solid #e5e3de">${r.location_code}</td>
-        <td style="padding:8px 12px;font-size:13px;color:#9b9892;border-bottom:1px solid #e5e3de">No new information found on ${r.location_name} this week.</td>
-      </tr>`;
-    }
+  const usSignals = us.flatMap(r => (r.report_json||{}).market_signals || [])
+    .filter(s => s.direction === 'positive').slice(0, 2).map(s => s.signal).join('; ');
 
-    let text = '';
-    if (position) text += `<strong>${position}</strong>${rank ? ` (${rank})` : ''}. `;
-    if (outlook) text += outlook;
-    if (topSignal) text += ` <em>${topSignal.signal}</em>`;
+  const para1 = `Signature / TECHNICair holds a leading or dominant market position at ${usLeaders.length} of ${us.length} US locations this week, with strongest positioning at ${usLeaders.slice(0,4).join(', ')}${usLeaders.length > 4 ? ` and ${usLeaders.length - 4} others` : ''}. ${usSignals ? `Key positive signals: ${usSignals}.` : ''}`;
 
-    return `<tr>
-      <td style="padding:8px 12px;font-weight:600;font-family:monospace;font-size:12px;color:#1a1916;vertical-align:top;white-space:nowrap;border-bottom:1px solid #e5e3de">${r.location_code}</td>
-      <td style="padding:8px 12px;font-size:13px;color:#1a1916;line-height:1.6;border-bottom:1px solid #e5e3de">${text}</td>
-    </tr>`;
-  };
+  // Build paragraph 2 — UK overview + M&A angle
+  const ukLeaders = uk.filter(r => {
+    const kpis = (r.report_json||{}).kpi_table || [];
+    const pos = kpis.find(k => k.field === 'Signature Position')?.value || '';
+    return pos.toLowerCase().includes('dominant') || pos.toLowerCase().includes('leader');
+  }).map(r => r.location_code);
+
+  const ukSignals = uk.flatMap(r => (r.report_json||{}).market_signals || [])
+    .filter(s => s.direction !== 'neutral').slice(0, 2).map(s => s.signal).join('; ');
+
+  const allOutlooks = reports.flatMap(r => {
+    const es = (r.report_json||{}).executive_summary || {};
+    return es.strategic_outlook ? [es.strategic_outlook] : [];
+  });
+  const topOutlook = allOutlooks[0] || '';
+
+  const para2 = `In the UK/EMEA portfolio, Signature maintains a leading position at ${ukLeaders.length} of ${uk.length} locations${ukLeaders.length ? ` including ${ukLeaders.slice(0,3).join(', ')}` : ''}. ${ukSignals ? `Notable market signals: ${ukSignals}.` : ''} ${topOutlook ? topOutlook : ''}`.trim();
 
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f9f8f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
-  <div style="max-width:680px;margin:0 auto;padding:32px 16px">
+  <div style="max-width:620px;margin:0 auto;padding:28px 16px">
 
-    <div style="background:linear-gradient(135deg,#1a3a5c,#1a6db5);border-radius:10px;padding:24px;margin-bottom:24px;color:#fff">
-      <div style="font-size:22px;font-weight:700;margin-bottom:6px">✈️ Condor Market Intelligence</div>
-      <div style="font-size:14px;opacity:.85">Week of ${weekLabel} · ${reports.length} locations · Signature Aviation MRO Portfolio</div>
+    <div style="background:linear-gradient(135deg,#1a3a5c,#1a6db5);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#fff">
+      <div style="font-size:20px;font-weight:700;margin-bottom:4px">✈️ Condor Market Intelligence</div>
+      <div style="font-size:13px;opacity:.8">Week of ${weekLabel} · ${reports.length} locations · Signature Aviation MRO Portfolio</div>
     </div>
 
-    <div style="background:#fff;border:1px solid #e5e3de;border-radius:10px;padding:20px;margin-bottom:16px">
-      <div style="font-size:13px;font-weight:600;color:#9b9892;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🇺🇸 United States — ${us.length} locations</div>
-      <table style="width:100%;border-collapse:collapse">
-        ${us.map(renderRow).join('')}
-      </table>
+    <div style="background:#fff;border:1px solid #e5e3de;border-radius:10px;padding:20px 24px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:600;color:#9b9892;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Weekly summary</div>
+      <p style="font-size:14px;color:#1a1916;line-height:1.75;margin-bottom:14px">${para1}</p>
+      <p style="font-size:14px;color:#1a1916;line-height:1.75">${para2}</p>
     </div>
 
-    <div style="background:#fff;border:1px solid #e5e3de;border-radius:10px;padding:20px;margin-bottom:24px">
-      <div style="font-size:13px;font-weight:600;color:#9b9892;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🇬🇧 UK / EMEA — ${uk.length} locations</div>
-      <table style="width:100%;border-collapse:collapse">
-        ${uk.map(renderRow).join('')}
-      </table>
-    </div>
-
-    <div style="text-align:center;margin-bottom:24px">
-      <a href="https://project-condor-xi.vercel.app" style="display:inline-block;background:#1a6db5;color:#fff;text-decoration:none;padding:12px 28px;border-radius:6px;font-size:14px;font-weight:500">View full reports →</a>
+    <div style="text-align:center;margin-bottom:20px">
+      <a href="https://project-condor-xi.vercel.app" style="display:inline-block;background:#1a6db5;color:#fff;text-decoration:none;padding:11px 26px;border-radius:6px;font-size:13px;font-weight:500">View full reports →</a>
     </div>
 
     <div style="font-size:11px;color:#9b9892;text-align:center;line-height:1.6">
-      Generated automatically every Monday at 6 AM ET via Perplexity live web search.<br>
-      Project Condor · ARGI Advisory · Signature Aviation MRO Portfolio
+      Auto-generated every Monday 6 AM ET · Perplexity live web search<br>
+      Project Condor · ARGI Advisory
     </div>
   </div>
 </body>
 </html>`;
 }
-
 async function sendEmail(htmlContent, reports) {
   const weekLabel = reports[0]?.week_label || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   const recipients = EMAIL_TO.split(',').map(e => ({ email: e.trim() }));
