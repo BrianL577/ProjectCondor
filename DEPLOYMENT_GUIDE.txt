@@ -1,0 +1,201 @@
+# Condor Market Intelligence — Deployment Guide
+# Complete setup: ~25 minutes. No coding required.
+# Follow every step in order.
+
+================================================================
+WHAT YOU WILL SET UP
+================================================================
+1. GitHub      → stores the code and runs the weekly scheduler
+2. Supabase    → stores all generated reports (the database)
+3. Vercel      → hosts the website your team visits
+4. Connect     → link the three services together
+
+All services are FREE on their starter tiers.
+
+================================================================
+STEP 1 — CREATE A GITHUB ACCOUNT (skip if you have one)
+================================================================
+1. Go to: https://github.com
+2. Click "Sign up"
+3. Enter email, password, username
+4. Verify your email
+5. Done — you're on GitHub
+
+================================================================
+STEP 2 — UPLOAD THIS CODE TO GITHUB
+================================================================
+1. On GitHub, click the "+" icon (top right) → "New repository"
+2. Name it: condor-market-intelligence
+3. Set it to PRIVATE (important — this contains your API keys later)
+4. Click "Create repository"
+
+Now upload the files:
+5. On the new repo page, click "uploading an existing file"
+6. Drag and drop ALL files from this folder:
+   - package.json
+   - vercel.json
+   - setup_database.sql
+   - scripts/generate.js          ← upload inside a "scripts" folder
+   - .github/workflows/weekly-reports.yml  ← upload inside ".github/workflows" folder
+   - web/public/index.html        ← upload inside "web/public" folder
+
+   TIP: GitHub will ask you to create the folders. When uploading,
+   you can type the folder path before the filename, e.g.:
+   scripts/generate.js
+   .github/workflows/weekly-reports.yml
+   web/public/index.html
+
+7. Click "Commit changes"
+
+Your code is now on GitHub.
+
+================================================================
+STEP 3 — CREATE A SUPABASE ACCOUNT (the database)
+================================================================
+1. Go to: https://supabase.com
+2. Click "Start your project" → sign in with GitHub (same account)
+3. Click "New project"
+4. Name it: condor-reports
+5. Set a database password (save it somewhere safe — you won't need
+   it again but keep it)
+6. Choose region: US East (or closest to you)
+7. Click "Create new project" — wait ~2 minutes for it to set up
+
+Now create the database table:
+8. In your Supabase project, click "SQL Editor" in the left sidebar
+9. Open the file "setup_database.sql" from this folder in any text
+   editor (Notepad, TextEdit, VS Code)
+10. Copy ALL the text in that file
+11. Paste it into the Supabase SQL Editor
+12. Click "Run" (green button)
+13. You should see: "Database setup complete. Table created with 0 rows."
+
+Now get your keys:
+14. Click "Project Settings" (gear icon, left sidebar) → "API"
+15. Copy and save these two values (you'll need them in Steps 4 and 5):
+    - Project URL (looks like: https://abcdefgh.supabase.co)
+    - anon public key (long string starting with eyJ...)
+    - service_role key (different long string — keep this SECRET)
+
+================================================================
+STEP 4 — ADD YOUR SECRETS TO GITHUB
+================================================================
+Your secrets are passwords that GitHub Actions uses — they are
+encrypted and never visible to anyone.
+
+1. Go to your GitHub repository (condor-market-intelligence)
+2. Click "Settings" tab (top of the repo page)
+3. Click "Secrets and variables" → "Actions" (left sidebar)
+4. Click "New repository secret" — add these one at a time:
+
+   Secret name: GEMINI_API_KEY
+   Value: your Gemini API key (from aistudio.google.com/app/apikey)
+   → Click "Add secret"
+
+   Secret name: SUPABASE_URL
+   Value: your Supabase Project URL (from Step 3, item 15)
+   → Click "Add secret"
+
+   Secret name: SUPABASE_SERVICE_KEY
+   Value: your Supabase service_role key (from Step 3, item 15)
+   → Click "Add secret"
+
+You should now have 3 secrets listed. This is the security layer —
+these values are used by the weekly job but never exposed publicly.
+
+================================================================
+STEP 5 — TEST THE SYSTEM (run it once manually)
+================================================================
+Before waiting until Monday, let's test it right now:
+
+1. In your GitHub repo, click the "Actions" tab
+2. Click "Weekly Market Intelligence Reports" (left sidebar)
+3. Click "Run workflow" (right side, gray button)
+4. Set "Dry run" to FALSE
+5. Click the green "Run workflow" button
+6. Wait 5-10 minutes — you'll see a progress circle
+7. Click on the running job to watch the logs
+8. When finished: green checkmark = success, red X = error
+   (if error, copy the log and send it to Brian for help)
+
+After it succeeds, go to your Supabase project → Table Editor →
+reports table → you should see 22 rows (one per location).
+
+================================================================
+STEP 6 — DEPLOY THE WEBSITE ON VERCEL
+================================================================
+1. Go to: https://vercel.com
+2. Click "Sign up" → "Continue with GitHub"
+3. Authorize Vercel to access your GitHub
+4. Click "Add New Project"
+5. Find "condor-market-intelligence" → click "Import"
+6. Under "Root Directory", type: web/public
+7. Click "Environment Variables" → add these two:
+   Name: NEXT_PUBLIC_SUPABASE_URL
+   Value: your Supabase Project URL
+   → Add
+
+   Name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+   Value: your Supabase anon public key (NOT the service key)
+   → Add
+
+8. Click "Deploy"
+9. Wait ~1 minute
+
+Vercel gives you a URL like: condor-market-intelligence.vercel.app
+That is your website. Share it with your team.
+
+IMPORTANT — Update the HTML with your Supabase credentials:
+After deploying, you need to edit web/public/index.html:
+- Find the line: const SUPABASE_URL = window.SUPABASE_URL || '__SUPABASE_URL__';
+- Replace __SUPABASE_URL__ with your actual Supabase URL
+- Find: const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '__SUPABASE_ANON_KEY__';
+- Replace __SUPABASE_ANON_KEY__ with your anon public key
+- Commit the change to GitHub — Vercel redeploys automatically
+
+================================================================
+STEP 7 — DONE. AUTOMATION IS LIVE.
+================================================================
+From now on:
+- Every Monday at 6 AM ET, GitHub Actions runs automatically
+- It generates fresh reports for all 22 locations
+- Saves them to Supabase
+- Your team visits the Vercel URL to read them
+
+You never have to do anything. It runs itself.
+
+================================================================
+OPTIONAL — CUSTOM DOMAIN
+================================================================
+If you want condor.argi.com instead of condor-market-intelligence.vercel.app:
+1. Go to Vercel → your project → Settings → Domains
+2. Add your custom domain
+3. Vercel gives you DNS records to add with your domain registrar
+
+================================================================
+TROUBLESHOOTING
+================================================================
+Problem: GitHub Actions shows red X
+→ Click the failed job → read the error message
+→ Most common: wrong secret value. Re-check Step 4.
+
+Problem: Website shows "Could not connect to database"
+→ Check that __SUPABASE_URL__ and __SUPABASE_ANON_KEY__ were
+  replaced in index.html with your real values
+
+Problem: 0 reports showing on website after successful run
+→ Go to Supabase → Table Editor → reports → verify rows exist
+→ If rows exist, the issue is the website credentials (above)
+
+Problem: Gemini API error
+→ Check your GEMINI_API_KEY secret — go to aistudio.google.com
+  and create a new key if needed
+
+================================================================
+COST SUMMARY
+================================================================
+GitHub Actions:   Free (2,000 minutes/month — you use ~10/week)
+Supabase:         Free (500MB database — you'll use ~10MB/year)
+Vercel:           Free (unlimited static hosting)
+Gemini API:       Free (1M tokens/month — you use ~300K/week)
+TOTAL:            $0/month
