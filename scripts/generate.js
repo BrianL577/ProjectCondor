@@ -1,19 +1,19 @@
 // ============================================================
 // Condor Market Intelligence — Weekly Report Generator
 // Runs every Monday via GitHub Actions scheduler
-// Calls Groq AI → saves reports to Supabase database
+// Uses Perplexity AI (live web search) → saves to Supabase
 // ============================================================
 
 import fetch from 'node-fetch';
 import { createClient } from '@supabase/supabase-js';
 
-const GROQ_KEY = process.env.GROQ_API_KEY;
+const PERPLEXITY_KEY = process.env.PERPLEXITY_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const DRY_RUN = process.argv.includes('--dry-run');
 
-if (!GROQ_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('Missing required environment variables: GROQ_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY');
+if (!PERPLEXITY_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('Missing required environment variables: PERPLEXITY_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY');
   process.exit(1);
 }
 
@@ -88,17 +88,19 @@ LOCATION: ${loc.name} (${loc.code}) — ${loc.city} — ${loc.type} — ${loc.co
 CURRENCY: ${currency}
 AUTHORITATIVE MRO REGISTRY: ${regulator}
 
-INTERNAL BASELINE DATA (update with fresh public data where available):
+INTERNAL BASELINE DATA (update with fresh live web data where available):
 ${JSON.stringify(loc.baseline, null, 2)}
 
-DATA INTEGRITY RULES — NON-NEGOTIABLE:
-1. Every data point must cite its source (e.g. "FAA ATADS 2024", "BTS T-100 2025", "EIA weekly", "GAMA Q1 2025")
-2. Never invent competitor names. Only list operators you can verify from ${regulator}. Mark others [UNVERIFIED]
-3. Never fabricate financial figures. If unknown, write "Not publicly available"
-4. Market share estimates must be labeled as estimates with rationale
-5. If data is from baseline (not independently verified this week), mark source as "Baseline data"
+YOUR TASK: Search the web right now and generate a current weekly market intelligence report for this location. Use live sources including FAA ATADS, BTS T-100, EIA fuel data, GAMA reports, AIN/Aviation Week news, and the ${regulator}.
 
-Respond ONLY with valid JSON — no markdown, no text before or after:
+DATA INTEGRITY RULES — NON-NEGOTIABLE:
+1. Every data point must cite its exact source URL or dataset name
+2. Never invent competitor names. Only list operators verified from ${regulator} or live web search. Mark others [UNVERIFIED]
+3. Never fabricate financial figures. If unknown write "Not publicly available"
+4. Market share estimates must be clearly labeled as estimates with rationale
+5. If using baseline data not verified this week, mark source as "Baseline data — needs verification"
+
+Respond ONLY with valid JSON — no markdown, no text outside the JSON:
 
 {
   "location_code": "${loc.code}",
@@ -109,19 +111,19 @@ Respond ONLY with valid JSON — no markdown, no text before or after:
   "report_date": "${new Date().toISOString().slice(0, 10)}",
   "week_label": "Week of ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}",
   "executive_summary": {
-    "market_context": "2-3 sentences on this airport's current aviation market. Cite actual data (pax, ops, trends). Include source.",
-    "competitive_landscape": "2-3 sentences on competition at this airport. Only name verified operators. Flag any unverified.",
-    "strategic_outlook": "2-3 sentences on what matters for an M&A buyer right now — demand drivers, risks, opportunities."
+    "market_context": "2-3 sentences on current aviation market at this airport. Include specific recent data points with sources.",
+    "competitive_landscape": "2-3 sentences on verified competitors. Flag any unverified names explicitly.",
+    "strategic_outlook": "2-3 sentences on what matters for an M&A buyer right now at this specific location."
   },
   "kpi_table": [
     {"field": "Location", "value": "${loc.name} (${loc.code})", "source": "Internal", "verified": true},
-    {"field": "Competitor Count", "value": "number + brief note", "source": "source name", "verified": true},
+    {"field": "Competitor Count", "value": "number + brief note", "source": "source URL or name", "verified": true},
     {"field": "Airport Tier", "value": "I/II/III/IV + rationale", "source": "FAA classifications", "verified": true},
     {"field": "Market Size (passengers/yr)", "value": "figure + year", "source": "BTS T-100 or equivalent", "verified": true},
     {"field": "Site EBITDA Context", "value": "Market-level commentary only. Never invent Signature financials.", "source": "Market estimate", "verified": false},
     {"field": "Annual Operations (T+L)", "value": "figure + year", "source": "FAA ATADS or equivalent", "verified": true},
-    {"field": "Fuel Flowage", "value": "Low/Med/High/Very High + context", "source": "source", "verified": true},
-    {"field": "MRO Operators at Airport", "value": "Verified list only. Append [UNVERIFIED] for any unconfirmed.", "source": "${regulator}", "verified": true},
+    {"field": "Fuel Flowage", "value": "Low/Med/High/Very High + context", "source": "EIA or market data", "verified": true},
+    {"field": "MRO Operators at Airport", "value": "Verified list only. Append [UNVERIFIED] for unconfirmed names.", "source": "${regulator}", "verified": true},
     {"field": "Facility Size (sq ft)", "value": "figure or range", "source": "source or Baseline data", "verified": false},
     {"field": "Maintenance Category", "value": "Line / Base / Heavy / Avionics / Hybrid", "source": "Operational profile", "verified": true},
     {"field": "Signature Position", "value": "Dominant/Leading/Competitive/Marginal + rationale", "source": "Market analysis", "verified": false},
@@ -131,34 +133,43 @@ Respond ONLY with valid JSON — no markdown, no text before or after:
     {"field": "Positional Ranking", "value": "#X of Y operators", "source": "Market analysis", "verified": false}
   ],
   "market_signals": [
-    {"signal": "headline", "detail": "one sentence with data point", "direction": "positive/negative/neutral", "source": "source name"}
+    {"signal": "current headline relevant to this location or market", "detail": "one sentence with specific data", "direction": "positive/negative/neutral", "source": "source URL"}
   ],
-  "data_gaps": ["any fields that could not be verified and need manual follow-up"],
-  "sources_cited": ["complete list of all sources referenced"]
+  "data_gaps": ["fields that could not be verified and need manual follow-up"],
+  "sources_cited": ["complete list of all URLs and datasets referenced"]
 }`;
 }
 
 // ============================================================
-// Call Groq API (free, no quota issues)
+// Call Perplexity API (live web search on every query)
 // ============================================================
-async function callGroq(prompt) {
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+async function callPerplexity(prompt) {
+  const response = await fetch('https://api.perplexity.ai/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROQ_KEY}`
+      'Authorization': `Bearer ${PERPLEXITY_KEY}`
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.15,
+      model: 'sonar',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert aviation market intelligence analyst. You search the web for current data and always respond with valid JSON only. Never include markdown formatting or text outside the JSON object.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.1,
       max_tokens: 3500
     })
   });
 
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(`Groq API error: ${err.error?.message || response.status}`);
+    throw new Error(`Perplexity API error: ${err.error?.message || JSON.stringify(err) || response.status}`);
   }
 
   const data = await response.json();
@@ -168,7 +179,16 @@ async function callGroq(prompt) {
   try {
     return JSON.parse(clean);
   } catch (e) {
-    throw new Error(`Failed to parse Groq response as JSON: ${e.message}\nRaw: ${raw.slice(0, 200)}`);
+    // Try to extract JSON if there's text around it
+    const match = clean.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (e2) {
+        throw new Error(`Failed to parse Perplexity response as JSON: ${e.message}\nRaw: ${raw.slice(0, 300)}`);
+      }
+    }
+    throw new Error(`Failed to parse Perplexity response as JSON: ${e.message}\nRaw: ${raw.slice(0, 300)}`);
   }
 }
 
@@ -207,7 +227,7 @@ async function run() {
   console.log(`Date: ${new Date().toISOString()}`);
   console.log(`Locations to process: ${LOCATIONS.length}`);
   console.log(`Mode: ${DRY_RUN ? 'DRY RUN (no DB writes)' : 'LIVE'}`);
-  console.log(`AI Engine: Groq (llama-3.3-70b-versatile)`);
+  console.log(`AI Engine: Perplexity Sonar (live web search)`);
   console.log(`========================================\n`);
 
   const results = { success: [], failed: [] };
@@ -218,24 +238,30 @@ async function run() {
 
     try {
       const prompt = buildPrompt(loc);
-      const report = await callGroq(prompt);
+      const report = await callPerplexity(prompt);
 
       if (!DRY_RUN) {
         await saveReport(report);
         console.log(`  ✓ Saved to database`);
       } else {
         console.log(`  ✓ Generated (dry run — not saved)`);
-        console.log(`  Preview: ${report.executive_summary?.market_context?.slice(0, 100)}...`);
+        console.log(`  Preview: ${report.executive_summary?.market_context?.slice(0, 120)}...`);
       }
 
       results.success.push(loc.code);
 
-      // Small pause between calls to be respectful of the API
-      if (i < LOCATIONS.length - 1) await sleep(1000);
+      // Pause between calls — Perplexity recommends ~3s between requests
+      if (i < LOCATIONS.length - 1) await sleep(4000);
 
     } catch (err) {
       console.error(`  ✗ Failed: ${err.message}`);
       results.failed.push({ code: loc.code, error: err.message });
+
+      // On rate limit, wait 30 seconds and continue
+      if (err.message.includes('rate') || err.message.includes('429')) {
+        console.log(`  ⏸ Rate limit hit — waiting 30 seconds...`);
+        await sleep(30000);
+      }
     }
   }
 
