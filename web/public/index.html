@@ -199,11 +199,11 @@ const CONDOR_DB_KEY = 'sb_publishable_mzGA23ZJc44Co7FtFPBU9g_EpqY-kLc';
 // ============================================================
 // Load Supabase client from CDN
 // ============================================================
-const script = document.createElement('script');
-script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-script.onload = () => initApp();
-script.onerror = () => showError('Could not load Supabase library. Check internet connection.');
-document.head.appendChild(script);
+const sbScript = document.createElement('script');
+sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+sbScript.onload = () => initApp();
+sbScript.onerror = () => showError('Could not load Supabase library. Check internet connection.');
+document.head.appendChild(sbScript);
 
 let dbClient;
 let allReports = [];
