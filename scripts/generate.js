@@ -227,8 +227,13 @@ async function run() {
 
       results.success.push(loc.code);
 
-      // Rate limit: wait 3 seconds between calls to avoid API quota issues
-      if (i < LOCATIONS.length - 1) await sleep(3000);
+      // Rate limit: wait 65 seconds every 14 requests to stay under free tier quota
+      if ((i + 1) % 14 === 0 && i < LOCATIONS.length - 1) {
+        console.log(`  ⏸ Rate limit pause — waiting 65 seconds before continuing...`);
+        await sleep(65000);
+      } else if (i < LOCATIONS.length - 1) {
+        await sleep(2000);
+      }
 
     } catch (err) {
       console.error(`  ✗ Failed: ${err.message}`);
