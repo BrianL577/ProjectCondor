@@ -254,13 +254,16 @@ async function run() {
       if (i < LOCATIONS.length - 1) await sleep(4000);
 
     } catch (err) {
-      console.error(`  ✗ Failed: ${err.message}`);
-      results.failed.push({ code: loc.code, error: err.message });
-
-      // On rate limit, wait 30 seconds and continue
-      if (err.message.includes('rate') || err.message.includes('429')) {
-        console.log(`  ⏸ Rate limit hit — waiting 30 seconds...`);
-        await sleep(30000);
+      console.error(`  ✗ Failed: ${err.message.slice(0, 120)}`);
+      console.log(`  ↻ Retrying in 10 seconds...`);
+      await sleep(10000);
+      try {
+        const report = await callPerplexity(buildPrompt(loc));
+        if (!DRY_RUN) { await saveReport(report); console.log(`  ✓ Retry succeeded — saved to database`); }
+        results.success.push(loc.code);
+      } catch (err2) {
+        console.error(`  ✗ Retry also failed: ${err2.message.slice(0, 120)}`);
+        results.failed.push({ code: loc.code, error: err2.message });
       }
     }
   }
