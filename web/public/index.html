@@ -5,24 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Condor Market Intelligence</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f9f8f6;--surface:#fff;--surface2:#f2f1ee;--border:#e5e3de;--border2:#d0cec8;
-  --text:#1a1916;--text2:#6b6963;--text3:#9b9892;
+  --bg:#f7f8fa;--surface:#fff;--surface2:#f1f3f6;--border:#e3e6eb;--border2:#cdd2da;
+  --text:#142544;--text2:#5b6478;--text3:#8b93a3;
   --blue:#1a6db5;--blue-bg:#e8f0f9;--blue-text:#0d4a82;
   --green:#1a7a45;--green-bg:#e6f4ec;--green-text:#0f5530;
   --amber:#a05e0a;--amber-bg:#fdf0dc;--amber-text:#7a4708;
   --red:#b52020;--red-bg:#faeaea;--red-text:#821515;
+  /* Country color coding — US = navy, UK = green */
+  --us:#142544;--us-bg:#eaecf1;--us-text:#142544;
+  --uk:#13DCA2;--uk-bg:#e3fbf3;--uk-text:#0a8a64;
   --r:10px;--rs:6px
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
 .app{display:flex;min-height:100vh}
 .sidebar{width:256px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
 .main{flex:1;padding:2rem;max-width:1100px}
-.sidebar-header{padding:1.25rem;border-bottom:1px solid var(--border)}
-.logo{font-size:15px;font-weight:600}
-.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.sidebar-header{padding:1.5rem 1.25rem;background:linear-gradient(160deg,#142544 0%,#1a3a5c 60%,#0f6e5c 130%)}
+.logo{font-size:15px;font-weight:700;color:#fff;letter-spacing:.01em}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
 .nav{padding:.5rem 0;flex:1}
 .nav-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:.5rem 1.25rem .25rem}
 .nav-item{display:flex;align-items:center;gap:8px;padding:.45rem 1.25rem;cursor:pointer;font-size:13px;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s}
@@ -45,6 +50,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-green{background:var(--green-bg);color:var(--green-text)}
 .badge-amber{background:var(--amber-bg);color:var(--amber-text)}
 .badge-gray{background:var(--surface2);color:var(--text2)}
+.badge-us{background:var(--us-bg);color:var(--us-text);border:1px solid var(--us)}
+.badge-uk{background:var(--uk-bg);color:var(--uk-text);border:1px solid var(--uk)}
+.country-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;flex-shrink:0}
+.country-dot.us{background:var(--us)}
+.country-dot.uk{background:var(--uk)}
 .alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
 .alert-red{background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
@@ -106,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dash-card-preview{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* Summary page */
-.summary-hero{background:linear-gradient(135deg,#1a3a5c 0%,#1a6db5 100%);border-radius:var(--r);padding:1.5rem;color:#fff;margin-bottom:1.5rem}
+.summary-hero{background:linear-gradient(135deg,#142544 0%,#1a3a5c 55%,#0f8a6c 100%);border-radius:var(--r);padding:1.5rem;color:#fff;margin-bottom:1.5rem}
 .summary-hero h2{font-size:18px;font-weight:700;margin-bottom:4px}
 .summary-hero p{font-size:13px;opacity:.85;line-height:1.6}
 .summary-section{margin-bottom:1.5rem}
@@ -120,6 +130,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .filter-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;transition:all .12s}
 .filter-btn:hover{background:var(--surface2)}
 .filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.filter-btn[data-cc="us"].active{background:var(--us);border-color:var(--us)}
+.filter-btn[data-cc="uk"].active{background:var(--uk);border-color:var(--uk);color:#0a2e22}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
 .btn:hover{background:var(--surface2)}
 @media(max-width:700px){
@@ -186,8 +198,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="page-sub">All reports organized by week. Click a folder to expand.</div>
       <div class="filter-bar">
         <button class="filter-btn active" onclick="filterArchive('all',this)">All</button>
-        <button class="filter-btn" onclick="filterArchive('US',this)">🇺🇸 US</button>
-        <button class="filter-btn" onclick="filterArchive('UK',this)">🇬🇧 UK</button>
+        <button class="filter-btn" data-cc="us" onclick="filterArchive('US',this)">🇺🇸 US</button>
+        <button class="filter-btn" data-cc="uk" onclick="filterArchive('UK',this)">🇬🇧 UK</button>
         <button class="filter-btn" onclick="filterArchive('TECHNICair',this)">TECHNICair</button>
         <button class="filter-btn" onclick="filterArchive('FBO',this)">FBO/MRO</button>
       </div>
@@ -197,21 +209,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <!-- SOURCES -->
     <div id="panel-sources" class="panel">
       <div class="page-title">Data sources</div>
-      <div class="page-sub">Every report is grounded in live web search via Perplexity Sonar. All sources are cited per claim.</div>
+      <div class="page-sub">Every report is grounded in live web search via Perplexity Sonar. All sources are cited per claim. Click any link below to validate the underlying data yourself.</div>
+
       <div class="card">
+        <div class="card-title"><span class="country-dot us"></span>US sources</div>
         <table class="tbl">
-          <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th></tr></thead>
+          <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th><th>Link</th></tr></thead>
           <tbody>
-            <tr><td>FAA ATADS (aspm.faa.gov)</td><td>Annual operations, ground delays</td><td>Monthly</td></tr>
-            <tr><td>BTS T-100 (transtats.bts.gov)</td><td>Passenger traffic by airport</td><td>Monthly</td></tr>
-            <tr><td>EIA (api.eia.gov)</td><td>Jet-A fuel price index</td><td>Weekly</td></tr>
-            <tr><td>FAA Part 145 DB (av-info.faa.gov)</td><td>Verified MRO operators by airport</td><td>Continuous</td></tr>
-            <tr><td>BLS OES (api.bls.gov)</td><td>A&P mechanic labor costs</td><td>Monthly</td></tr>
-            <tr><td>GAMA (gama.aero)</td><td>Bizav shipments & activity</td><td>Quarterly</td></tr>
-            <tr><td>AIN / Aviation Week RSS</td><td>Industry headlines & deals</td><td>Daily</td></tr>
-            <tr><td>UK CAA (caa.co.uk)</td><td>UK approved MRO organisations</td><td>Quarterly</td></tr>
+            <tr><td>FAA ATADS</td><td>Annual operations by airport</td><td>Monthly</td><td><a href="https://aspm.faa.gov/opsnet/sys/airport.asp" target="_blank" rel="noopener">aspm.faa.gov/opsnet/sys/airport.asp</a></td></tr>
+            <tr><td>BTS T-100</td><td>Passenger traffic by airport</td><td>Monthly</td><td><a href="https://www.transtats.bts.gov/airports.asp" target="_blank" rel="noopener">transtats.bts.gov/airports.asp</a></td></tr>
+            <tr><td>EIA Jet Fuel Spot Price</td><td>Jet-A fuel price index</td><td>Weekly</td><td><a href="https://www.eia.gov/dnav/pet/hist/eer_epjk_pf4_rgc_dpgW.htm" target="_blank" rel="noopener">eia.gov — Gulf Coast jet fuel (weekly)</a></td></tr>
+            <tr><td>FAA Repair Station / AVInfo</td><td>Verified Part 145 MRO operators by airport</td><td>Continuous</td><td><a href="https://www.faa.gov/av-info/facility-dashboard" target="_blank" rel="noopener">faa.gov/av-info/facility-dashboard</a></td></tr>
+            <tr><td>BLS OES</td><td>A&P mechanic labor costs</td><td>Monthly</td><td><a href="https://www.bls.gov/oes/" target="_blank" rel="noopener">bls.gov/oes</a></td></tr>
+            <tr><td>GAMA</td><td>Bizav shipments & activity</td><td>Quarterly</td><td><a href="https://gama.aero/facts-and-statistics/" target="_blank" rel="noopener">gama.aero/facts-and-statistics</a></td></tr>
+            <tr><td>AIN / Aviation Week</td><td>Industry headlines & deals</td><td>Daily</td><td><a href="https://www.ainonline.com/" target="_blank" rel="noopener">ainonline.com</a></td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="country-dot uk"></span>UK / EMEA sources</div>
+        <table class="tbl">
+          <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th><th>Link</th></tr></thead>
+          <tbody>
+            <tr><td>UK CAA — Part 145 approvals</td><td>UK approved maintenance (MRO) organisations register</td><td>Updated as approvals change</td><td><a href="https://www.caa.co.uk/commercial-industry/aircraft/airworthiness/organisation-and-maintenance-programme-approvals/approved-airworthiness-organisations/" target="_blank" rel="noopener">caa.co.uk — approved airworthiness organisations</a></td></tr>
+            <tr><td>UK CAA — Part 145 overview</td><td>Part 145 approval requirements & guidance</td><td>As updated</td><td><a href="https://www.caa.co.uk/commercial-industry/aircraft/airworthiness/organisation-and-maintenance-programme-approvals/part-145/" target="_blank" rel="noopener">caa.co.uk/.../part-145</a></td></tr>
+            <tr><td>UK CAA — Airport data</td><td>UK airport traffic & statistics</td><td>Monthly</td><td><a href="https://www.caa.co.uk/data-and-analysis/uk-aviation-market/airport-data/" target="_blank" rel="noopener">caa.co.uk/data-and-analysis/uk-aviation-market/airport-data</a></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text2);margin-top:.5rem">Note: the UK CAA publishes the Part 145 approved organisations list as a downloadable PDF from the page above (updated periodically) rather than a live searchable database — cross-check operator names against the latest PDF when verifying UK location reports.</p>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div class="card-title" style="color:var(--amber-text)">Validation status</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">The links above are the authoritative sources used to generate and verify each report. Per-location baseline figures in <code>scripts/generate.js</code> (competitor counts, market share, EBITDA context, etc.) are AI-generated estimates refreshed weekly and labeled "Baseline data — needs verification" or "estimate" where applicable in each report's KPI table — they have not all been individually re-confirmed against these sources in this pass. Use the links above to spot-check any figure before relying on it for a decision.</p>
       </div>
     </div>
 
@@ -278,9 +309,10 @@ function renderDashboard() {
   grid.innerHTML = latest.map(r => {
     const es = (r.report_json||{}).executive_summary || {};
     const preview = es.market_context || es.strategic_outlook || '';
-    return `<div class="dash-card" onclick="showReportInDash('${r.id}')">
-      <div class="dash-card-title">${esc(r.location_name)} <span style="color:var(--text3);font-weight:400;font-size:11px">${esc(r.location_code)}</span></div>
-      <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)}</div>
+    const cc = r.country === 'UK' ? 'uk' : 'us';
+    return `<div class="dash-card" style="border-left:3px solid var(--${cc})" onclick="showReportInDash('${r.id}')">
+      <div class="dash-card-title"><span class="country-dot ${cc}"></span>${esc(r.location_name)} <span style="color:var(--text3);font-weight:400;font-size:11px">${esc(r.location_code)}</span></div>
+      <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)} · <span class="badge badge-${cc}">${esc(r.country)}</span></div>
       ${preview ? `<div class="dash-card-preview">${esc(preview)}</div>` : ''}
     </div>`;
   }).join('');
@@ -325,7 +357,8 @@ function renderSummary() {
     if (position) text += `Position: <strong>${esc(position)}</strong>${rank ? ` (${esc(rank)})` : ''}. `;
     if (outlook) text += esc(outlook);
     if (topSignal) text += ` <em>${esc(topSignal.signal)}</em>`;
-    return `<div class="summary-row"><div class="summary-loc">${esc(r.location_code)}</div><div class="summary-text">${text}</div></div>`;
+    const cc = r.country === 'UK' ? 'uk' : 'us';
+    return `<div class="summary-row"><div class="summary-loc"><span class="country-dot ${cc}"></span>${esc(r.location_code)}</div><div class="summary-text">${text}</div></div>`;
   };
 
   container.innerHTML = `
@@ -373,17 +406,20 @@ function renderArchive(filter) {
   container.innerHTML = sortedWeeks.map((week, wi) => {
     const weekReports = weeks[week];
     const label = weekReports[0]?.week_label || new Date(week).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-    const locsHtml = weekReports.map(r => `
-      <div class="loc-item" id="loc-${wi}-${r.id}" onclick="toggleLocReport(${wi},'${r.id}')">
+    const locsHtml = weekReports.map(r => {
+      const cc = r.country === 'UK' ? 'uk' : 'us';
+      return `
+      <div class="loc-item" id="loc-${wi}-${r.id}" style="border-left:3px solid var(--${cc})" onclick="toggleLocReport(${wi},'${r.id}')">
         <div style="flex:1">
-          <div class="loc-name">${esc(r.location_name)}</div>
+          <div class="loc-name"><span class="country-dot ${cc}"></span>${esc(r.location_name)}</div>
           <div class="loc-type">${esc(r.city)} · ${esc(r.facility_type)}</div>
         </div>
         <span class="loc-code">${esc(r.location_code)}</span>
-        <span class="badge ${r.country==='UK'?'badge-blue':'badge-gray'}" style="margin-left:6px">${r.country}</span>
+        <span class="badge badge-${cc}" style="margin-left:6px">${r.country}</span>
       </div>
       <div id="report-${wi}-${r.id}" style="display:none;margin-bottom:.75rem">${renderReportHTML(r)}</div>
-    `).join('');
+    `;
+    }).join('');
 
     return `<div class="week-folder">
       <div class="week-folder-header" id="folder-header-${wi}" onclick="toggleFolder(${wi})">
@@ -474,9 +510,10 @@ function renderReportHTML(r) {
 
   const srcHtml = sources.length ? sources.map(s=>`<span class="source-chip">${esc(s)}</span>`).join('') : '';
 
+  const cc = (d.country||r.country) === 'UK' ? 'uk' : 'us';
   return `<div class="report-view">
-    <div class="report-header">
-      <div class="report-title">${esc(d.location_name||r.location_name||'')} <span style="color:var(--text3);font-weight:400;font-size:14px">(${esc(d.location_code||r.location_code||'')})</span></div>
+    <div class="report-header" style="border-left:3px solid var(--${cc});padding-left:.75rem">
+      <div class="report-title"><span class="country-dot ${cc}"></span>${esc(d.location_name||r.location_name||'')} <span style="color:var(--text3);font-weight:400;font-size:14px">(${esc(d.location_code||r.location_code||'')})</span> <span class="badge badge-${cc}">${esc(d.country||r.country||'')}</span></div>
       <div class="report-meta">${esc(d.city||r.city||'')} · ${esc(d.facility_type||r.facility_type||'')} · ${esc(d.week_label||d.report_date||'')}</div>
     </div>
 
