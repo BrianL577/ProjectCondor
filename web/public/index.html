@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Condor Market Intelligence</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23142544'/><path d='M20 60 L50 25 L80 60 L65 60 L65 80 L35 80 L35 60 Z' fill='%2313DCA2'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -16,43 +16,48 @@
   --green:#1a7a45;--green-bg:#e6f4ec;--green-text:#0f5530;
   --amber:#a05e0a;--amber-bg:#fdf0dc;--amber-text:#7a4708;
   --red:#b52020;--red-bg:#faeaea;--red-text:#821515;
-  /* Country color coding — US = navy, UK = green */
-  --us:#142544;--us-bg:#eaecf1;--us-text:#142544;
-  --uk:#13DCA2;--uk-bg:#e3fbf3;--uk-text:#0a8a64;
-  --r:10px;--rs:6px
+  /* Country color coding — US = navy, UK = green (full-panel fills) */
+  --us:#142544;--us2:#1c3a63;--us-bg:#eaecf1;--us-text:#142544;
+  --uk:#13DCA2;--uk2:#0f8a6c;--uk-bg:#e3fbf3;--uk-text:#0a6e51;
+  --r:14px;--rs:8px
 }
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
 .app{display:flex;min-height:100vh}
-.sidebar{width:256px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{flex:1;padding:2rem;max-width:1100px}
-.sidebar-header{padding:1.5rem 1.25rem;background:linear-gradient(160deg,#142544 0%,#1a3a5c 60%,#0f6e5c 130%)}
-.logo{font-size:15px;font-weight:700;color:#fff;letter-spacing:.01em}
-.logo-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
-.nav{padding:.5rem 0;flex:1}
-.nav-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:.5rem 1.25rem .25rem}
-.nav-item{display:flex;align-items:center;gap:8px;padding:.45rem 1.25rem;cursor:pointer;font-size:13px;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s}
+.sidebar{width:264px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;padding:2.5rem;max-width:1140px}
+.sidebar-header{padding:1.75rem 1.5rem;background:linear-gradient(160deg,#142544 0%,#1a3a5c 65%,#0f6e5c 135%)}
+.logo{font-size:17px;font-weight:800;color:#fff;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:baseline;gap:2px}
+.logo-accent{color:var(--uk)}
+.logo-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,.65);margin-top:5px;text-transform:uppercase;letter-spacing:.12em}
+.nav{padding:1rem 0;flex:1}
+.nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:.6rem 1.5rem .35rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.5rem;cursor:pointer;font-size:12.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:all .12s;border-left:3px solid transparent}
+.nav-item svg{flex-shrink:0;opacity:.75}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:var(--blue-bg);color:var(--blue-text);font-weight:500}
-.sidebar-foot{padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
-.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin-right:5px}
+.nav-item.active{background:var(--us-bg);color:var(--us);font-weight:700;border-left-color:var(--uk)}
+.nav-item.active svg{opacity:1}
+.sidebar-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--uk);margin-right:5px}
 .panel{display:none}.panel.active{display:block}
-.page-title{font-size:20px;font-weight:600;margin-bottom:4px}
-.page-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem}
-.metric-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-.metric-value{font-size:22px;font-weight:600}
-.metric-sub{font-size:11px;color:var(--text2);margin-top:2px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
-.card-title{font-size:14px;font-weight:600;margin-bottom:.75rem}
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500}
+.page-title{font-size:30px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em;color:var(--us)}
+.page-sub{font-size:13.5px;color:var(--text2);margin-bottom:1.75rem;max-width:640px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.75rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:0 1px 3px rgba(20,37,68,.05)}
+.metric-label{font-size:10.5px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.metric-value{font-size:26px;font-weight:800;color:var(--us);letter-spacing:-.01em}
+.metric-sub{font-size:11px;color:var(--text2);margin-top:3px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1.1rem;box-shadow:0 1px 3px rgba(20,37,68,.05)}
+.card-title{font-size:14.5px;font-weight:700;margin-bottom:.85rem;color:var(--us);display:flex;align-items:center;gap:6px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .badge-blue{background:var(--blue-bg);color:var(--blue-text)}
 .badge-green{background:var(--green-bg);color:var(--green-text)}
 .badge-amber{background:var(--amber-bg);color:var(--amber-text)}
 .badge-gray{background:var(--surface2);color:var(--text2)}
-.badge-us{background:var(--us-bg);color:var(--us-text);border:1px solid var(--us)}
-.badge-uk{background:var(--uk-bg);color:var(--uk-text);border:1px solid var(--uk)}
-.country-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;flex-shrink:0}
+.badge-us{background:var(--us);color:#fff}
+.badge-uk{background:var(--uk);color:#06231a}
+.badge-on-us{background:rgba(255,255,255,.18);color:#fff}
+.badge-on-uk{background:rgba(6,35,26,.14);color:#06231a}
+.country-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0}
 .country-dot.us{background:var(--us)}
 .country-dot.uk{background:var(--uk)}
 .alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
@@ -70,25 +75,29 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .week-folder-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;cursor:pointer;transition:background .12s;user-select:none}
 .week-folder-header:hover{background:var(--surface2)}
 .week-folder-header.open{background:var(--blue-bg);border-bottom:1px solid var(--border)}
-.week-folder-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.week-folder-title{font-size:14px;font-weight:700;color:var(--us);display:flex;align-items:center;gap:8px}
 .week-folder-meta{font-size:12px;color:var(--text3)}
 .week-folder-body{display:none;padding:1rem 1.25rem}
 .week-folder-body.open{display:block}
-.week-summary{background:var(--surface2);border-radius:var(--rs);padding:1rem;margin-bottom:1rem;border-left:3px solid var(--blue)}
-.week-summary h4{font-size:12px;font-weight:600;color:var(--blue-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+.week-summary{background:var(--surface2);border-radius:var(--rs);padding:1rem;margin-bottom:1rem}
+.week-summary h4{font-size:11px;font-weight:700;color:var(--us);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
 .week-summary p{font-size:13px;color:var(--text);line-height:1.7}
-.loc-item{display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:.4rem;cursor:pointer;background:var(--surface);transition:background .12s}
-.loc-item:hover{background:var(--surface2)}
-.loc-item.active{border-color:var(--blue);background:var(--blue-bg)}
-.loc-name{font-size:13px;font-weight:500;flex:1}
-.loc-code{font-size:11px;color:var(--text3);font-family:monospace}
-.loc-type{font-size:11px;color:var(--text2)}
+.loc-item{display:flex;align-items:center;gap:10px;padding:.65rem .9rem;border-radius:var(--rs);margin-bottom:.4rem;cursor:pointer;transition:filter .12s;color:#fff}
+.loc-item:hover{filter:brightness(1.08)}
+.loc-item.us{background:linear-gradient(120deg,var(--us),var(--us2))}
+.loc-item.uk{background:linear-gradient(120deg,var(--uk),var(--uk2));color:#06231a}
+.loc-item.active{outline:2px solid rgba(255,255,255,.5)}
+.loc-name{font-size:13px;font-weight:700;flex:1}
+.loc-code{font-size:11px;opacity:.8;font-family:monospace}
+.loc-type{font-size:11px;opacity:.85}
 
 /* Report view */
 .report-view{margin-top:1.5rem}
-.report-header{margin-bottom:1.25rem}
-.report-title{font-size:18px;font-weight:700;margin-bottom:3px}
-.report-meta{font-size:12px;color:var(--text2)}
+.report-header{margin-bottom:1.25rem;padding:1rem 1.25rem;border-radius:var(--r);color:#fff}
+.report-header.us{background:linear-gradient(120deg,var(--us),var(--us2))}
+.report-header.uk{background:linear-gradient(120deg,var(--uk),var(--uk2));color:#06231a}
+.report-title{font-size:18px;font-weight:800;margin-bottom:3px}
+.report-meta{font-size:12px;opacity:.85}
 .section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;margin-top:1.25rem}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
 .kpi-item{background:var(--surface2);border-radius:var(--rs);padding:.75rem}
@@ -108,32 +117,37 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .back-btn:hover{text-decoration:underline}
 
 /* Dashboard grid */
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.dash-card{border:1px solid var(--border);border-radius:var(--r);padding:1rem;background:var(--surface);cursor:pointer;transition:all .12s}
-.dash-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(26,109,181,.08)}
-.dash-card-title{font-size:13px;font-weight:600;margin-bottom:3px}
-.dash-card-meta{font-size:11px;color:var(--text3);margin-bottom:.5rem}
-.dash-card-preview{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.dash-card{border-radius:var(--r);padding:1.1rem;cursor:pointer;transition:transform .12s,filter .12s;color:#fff;box-shadow:0 2px 10px rgba(20,37,68,.12)}
+.dash-card:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.dash-card.us{background:linear-gradient(135deg,var(--us),var(--us2))}
+.dash-card.uk{background:linear-gradient(135deg,var(--uk),var(--uk2));color:#06231a}
+.dash-card-title{font-size:13.5px;font-weight:700;margin-bottom:3px}
+.dash-card-meta{font-size:11px;opacity:.85;margin-bottom:.6rem}
+.dash-card-preview{font-size:12px;opacity:.92;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* Summary page */
-.summary-hero{background:linear-gradient(135deg,#142544 0%,#1a3a5c 55%,#0f8a6c 100%);border-radius:var(--r);padding:1.5rem;color:#fff;margin-bottom:1.5rem}
-.summary-hero h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.summary-hero{background:linear-gradient(135deg,#142544 0%,#1a3a5c 55%,#0f8a6c 100%);border-radius:var(--r);padding:1.75rem;color:#fff;margin-bottom:1.5rem}
+.summary-hero h2{font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-.01em}
 .summary-hero p{font-size:13px;opacity:.85;line-height:1.6}
-.summary-section{margin-bottom:1.5rem}
-.summary-section h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
-.summary-row{display:flex;gap:12px;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.summary-section{margin-bottom:1.5rem;border-radius:var(--r);overflow:hidden}
+.summary-section h3{font-size:13px;font-weight:700;color:#fff;margin:0;padding:.75rem 1.1rem;text-transform:uppercase;letter-spacing:.05em}
+.summary-section.us h3{background:linear-gradient(120deg,var(--us),var(--us2))}
+.summary-section.uk h3{background:linear-gradient(120deg,var(--uk),var(--uk2));color:#06231a}
+.summary-section-body{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);padding:.25rem 1.1rem}
+.summary-row{display:flex;gap:12px;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--border)}
 .summary-row:last-child{border-bottom:none}
-.summary-loc{font-size:12px;font-weight:600;color:var(--text);min-width:80px;font-family:monospace}
+.summary-loc{font-size:12px;font-weight:700;color:var(--text);min-width:80px;font-family:monospace}
 .summary-text{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
 
 .filter-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
-.filter-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;transition:all .12s}
+.filter-btn{padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s}
 .filter-btn:hover{background:var(--surface2)}
-.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.filter-btn.active{background:var(--us);color:#fff;border-color:var(--us)}
 .filter-btn[data-cc="us"].active{background:var(--us);border-color:var(--us)}
-.filter-btn[data-cc="uk"].active{background:var(--uk);border-color:var(--uk);color:#0a2e22}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
-.btn:hover{background:var(--surface2)}
+.filter-btn[data-cc="uk"].active{background:var(--uk);border-color:var(--uk);color:#06231a}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;border:none;background:var(--uk);color:#06231a;font-size:13px;font-weight:700;cursor:pointer;transition:all .12s}
+.btn:hover{filter:brightness(1.08)}
 @media(max-width:700px){
   .app{flex-direction:column}
   .sidebar{width:100%;height:auto;position:static}
@@ -150,16 +164,16 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <div class="app">
   <nav class="sidebar">
     <div class="sidebar-header">
-      <div class="logo">✈️ Condor Intelligence</div>
+      <div class="logo">Condor<span class="logo-accent">.</span>Intelligence</div>
       <div class="logo-sub">Signature Aviation MRO Portfolio</div>
     </div>
     <div class="nav">
       <div class="nav-label">Reports</div>
-      <button class="nav-item active" onclick="nav('dashboard')">📊 Dashboard</button>
-      <button class="nav-item" onclick="nav('summary')">📋 Weekly summary</button>
-      <button class="nav-item" onclick="nav('archive')">🗂 Report archive</button>
+      <button class="nav-item active" onclick="nav('dashboard')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="nav('summary')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2h6a1 1 0 0 1 1 1v2H8V3a1 1 0 0 1 1-1z"/><rect x="5" y="5" width="14" height="16" rx="1"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/></svg>Weekly summary</button>
+      <button class="nav-item" onclick="nav('archive')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l2-3h14l2 3"/><rect x="3" y="7" width="18" height="13" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Report archive</button>
       <div class="nav-label" style="margin-top:.5rem">Info</div>
-      <button class="nav-item" onclick="nav('sources')">🔗 Data sources</button>
+      <button class="nav-item" onclick="nav('sources')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>Data sources</button>
     </div>
     <div class="sidebar-foot"><span class="dot"></span><span id="conn-status">Connecting...</span></div>
   </nav>
@@ -171,7 +185,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div class="page-title">Dashboard</div>
       <div class="page-sub" id="dash-date"></div>
       <div id="load-alert" class="alert-blue"><span class="spinner"></span> Loading latest reports...</div>
-      <div id="err-alert" class="alert-red" style="display:none">⚠ <span id="err-msg"></span></div>
+      <div id="err-alert" class="alert-red" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg> <span id="err-msg"></span></div>
       <div class="metrics">
         <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">22</div><div class="metric-sub">US + UK/EMEA</div></div>
         <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
@@ -198,8 +212,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div class="page-sub">All reports organized by week. Click a folder to expand.</div>
       <div class="filter-bar">
         <button class="filter-btn active" onclick="filterArchive('all',this)">All</button>
-        <button class="filter-btn" data-cc="us" onclick="filterArchive('US',this)">🇺🇸 US</button>
-        <button class="filter-btn" data-cc="uk" onclick="filterArchive('UK',this)">🇬🇧 UK</button>
+        <button class="filter-btn" data-cc="us" onclick="filterArchive('US',this)">US</button>
+        <button class="filter-btn" data-cc="uk" onclick="filterArchive('UK',this)">UK</button>
         <button class="filter-btn" onclick="filterArchive('TECHNICair',this)">TECHNICair</button>
         <button class="filter-btn" onclick="filterArchive('FBO',this)">FBO/MRO</button>
       </div>
@@ -310,9 +324,9 @@ function renderDashboard() {
     const es = (r.report_json||{}).executive_summary || {};
     const preview = es.market_context || es.strategic_outlook || '';
     const cc = r.country === 'UK' ? 'uk' : 'us';
-    return `<div class="dash-card" style="border-left:3px solid var(--${cc})" onclick="showReportInDash('${r.id}')">
-      <div class="dash-card-title"><span class="country-dot ${cc}"></span>${esc(r.location_name)} <span style="color:var(--text3);font-weight:400;font-size:11px">${esc(r.location_code)}</span></div>
-      <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)} · <span class="badge badge-${cc}">${esc(r.country)}</span></div>
+    return `<div class="dash-card ${cc}" onclick="showReportInDash('${r.id}')">
+      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px">${esc(r.location_code)}</span></div>
+      <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)} · <span class="badge badge-on-${cc}">${esc(r.country)}</span></div>
       ${preview ? `<div class="dash-card-preview">${esc(preview)}</div>` : ''}
     </div>`;
   }).join('');
@@ -358,7 +372,7 @@ function renderSummary() {
     if (outlook) text += esc(outlook);
     if (topSignal) text += ` <em>${esc(topSignal.signal)}</em>`;
     const cc = r.country === 'UK' ? 'uk' : 'us';
-    return `<div class="summary-row"><div class="summary-loc"><span class="country-dot ${cc}"></span>${esc(r.location_code)}</div><div class="summary-text">${text}</div></div>`;
+    return `<div class="summary-row"><div class="summary-loc">${esc(r.location_code)}</div><div class="summary-text">${text}</div></div>`;
   };
 
   container.innerHTML = `
@@ -366,16 +380,16 @@ function renderSummary() {
       <h2>Week of ${esc(weekLabel)}</h2>
       <p>Combined market intelligence — ${latest.length} locations across US and UK/EMEA. Generated automatically every Monday at 6 AM ET via Perplexity live web search.</p>
     </div>
-    <div class="summary-section">
-      <h3>🇺🇸 United States — ${us.length} locations</h3>
-      ${us.map(renderLocSummary).join('')}
+    <div class="summary-section us">
+      <h3>United States — ${us.length} locations</h3>
+      <div class="summary-section-body">${us.map(renderLocSummary).join('')}</div>
     </div>
-    <div class="summary-section">
-      <h3>🇬🇧 UK / EMEA — ${uk.length} locations</h3>
-      ${uk.map(renderLocSummary).join('')}
+    <div class="summary-section uk">
+      <h3>UK / EMEA — ${uk.length} locations</h3>
+      <div class="summary-section-body">${uk.map(renderLocSummary).join('')}</div>
     </div>
     <div style="margin-top:1rem;display:flex;gap:8px">
-      <button class="btn" onclick="window.print()">🖨 Print summary</button>
+      <button class="btn" onclick="window.print()">Print summary</button>
     </div>`;
 }
 
@@ -409,13 +423,13 @@ function renderArchive(filter) {
     const locsHtml = weekReports.map(r => {
       const cc = r.country === 'UK' ? 'uk' : 'us';
       return `
-      <div class="loc-item" id="loc-${wi}-${r.id}" style="border-left:3px solid var(--${cc})" onclick="toggleLocReport(${wi},'${r.id}')">
+      <div class="loc-item ${cc}" id="loc-${wi}-${r.id}" onclick="toggleLocReport(${wi},'${r.id}')">
         <div style="flex:1">
-          <div class="loc-name"><span class="country-dot ${cc}"></span>${esc(r.location_name)}</div>
+          <div class="loc-name">${esc(r.location_name)}</div>
           <div class="loc-type">${esc(r.city)} · ${esc(r.facility_type)}</div>
         </div>
         <span class="loc-code">${esc(r.location_code)}</span>
-        <span class="badge badge-${cc}" style="margin-left:6px">${r.country}</span>
+        <span class="badge badge-on-${cc}" style="margin-left:6px">${r.country}</span>
       </div>
       <div id="report-${wi}-${r.id}" style="display:none;margin-bottom:.75rem">${renderReportHTML(r)}</div>
     `;
@@ -423,7 +437,7 @@ function renderArchive(filter) {
 
     return `<div class="week-folder">
       <div class="week-folder-header" id="folder-header-${wi}" onclick="toggleFolder(${wi})">
-        <div class="week-folder-title">📁 ${esc(label)}</div>
+        <div class="week-folder-title">${esc(label)}</div>
         <div class="week-folder-meta">${weekReports.length} location${weekReports.length>1?'s':''} · click to expand</div>
       </div>
       <div class="week-folder-body" id="folder-body-${wi}">
@@ -512,8 +526,8 @@ function renderReportHTML(r) {
 
   const cc = (d.country||r.country) === 'UK' ? 'uk' : 'us';
   return `<div class="report-view">
-    <div class="report-header" style="border-left:3px solid var(--${cc});padding-left:.75rem">
-      <div class="report-title"><span class="country-dot ${cc}"></span>${esc(d.location_name||r.location_name||'')} <span style="color:var(--text3);font-weight:400;font-size:14px">(${esc(d.location_code||r.location_code||'')})</span> <span class="badge badge-${cc}">${esc(d.country||r.country||'')}</span></div>
+    <div class="report-header ${cc}">
+      <div class="report-title">${esc(d.location_name||r.location_name||'')} <span style="opacity:.7;font-weight:500;font-size:14px">(${esc(d.location_code||r.location_code||'')})</span> <span class="badge badge-on-${cc}">${esc(d.country||r.country||'')}</span></div>
       <div class="report-meta">${esc(d.city||r.city||'')} · ${esc(d.facility_type||r.facility_type||'')} · ${esc(d.week_label||d.report_date||'')}</div>
     </div>
 
