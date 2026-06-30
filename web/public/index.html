@@ -104,7 +104,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .report-header.uk{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2));color:#fff}
 .report-title{font-size:18px;font-weight:800;margin-bottom:3px}
 .report-meta{font-size:12px;opacity:.85}
-.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;margin-top:1.25rem}
+.section-title{position:relative;display:inline-block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;margin-top:1.25rem}
+.card-title{position:relative}
+.section-title.us::before,.card-title.us::before{content:"";position:absolute;left:-16px;top:50%;width:140px;height:64px;transform:translateY(-50%);background:radial-gradient(circle,rgba(26,109,181,.30) 0%,rgba(26,109,181,0) 72%);z-index:-1;pointer-events:none}
+.section-title.uk::before,.card-title.uk::before{content:"";position:absolute;left:-16px;top:50%;width:140px;height:64px;transform:translateY(-50%);background:radial-gradient(circle,rgba(15,138,108,.32) 0%,rgba(15,138,108,0) 72%);z-index:-1;pointer-events:none}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
 .kpi-item{background:var(--surface2);border-radius:var(--rs);padding:.75rem}
 .kpi-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
@@ -119,7 +122,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .signal-text{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px}
 .signal-detail{font-size:12px;color:var(--text2)}
 .source-chip{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);margin:2px}
-.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--blue);cursor:pointer;margin-bottom:1rem;background:none;border:none;padding:0}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#fff;cursor:pointer;margin-bottom:1rem;background:none;border:none;padding:0}
 .back-btn:hover{text-decoration:underline}
 
 /* Dashboard grid */
@@ -559,16 +562,16 @@ function renderReportHTML(r) {
     </div>
 
     <div class="card">
-      <div class="card-title">Executive summary</div>
-      ${es.market_context ? `<div style="margin-bottom:.75rem"><div class="section-title">Market context</div><p style="font-size:13px;line-height:1.7">${esc(es.market_context)}</p></div>` : ''}
-      ${es.competitive_landscape ? `<div style="margin-bottom:.75rem"><div class="section-title">Competitive landscape</div><p style="font-size:13px;line-height:1.7">${esc(es.competitive_landscape)}</p></div>` : ''}
-      ${es.strategic_outlook ? `<div><div class="section-title">Strategic outlook</div><p style="font-size:13px;line-height:1.7">${esc(es.strategic_outlook)}</p></div>` : ''}
+      <div class="card-title ${cc}">Executive summary</div>
+      ${es.market_context ? `<div style="margin-bottom:.75rem"><div class="section-title ${cc}">Market context</div><p style="font-size:13px;line-height:1.7">${esc(es.market_context)}</p></div>` : ''}
+      ${es.competitive_landscape ? `<div style="margin-bottom:.75rem"><div class="section-title ${cc}">Competitive landscape</div><p style="font-size:13px;line-height:1.7">${esc(es.competitive_landscape)}</p></div>` : ''}
+      ${es.strategic_outlook ? `<div><div class="section-title ${cc}">Strategic outlook</div><p style="font-size:13px;line-height:1.7">${esc(es.strategic_outlook)}</p></div>` : ''}
     </div>
 
-    ${kpis.length ? `<div class="card"><div class="card-title">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
-    ${signals.length ? `<div class="card"><div class="card-title">Market signals</div>${signalHtml}</div>` : ''}
+    ${kpis.length ? `<div class="card"><div class="card-title ${cc}">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
+    ${signals.length ? `<div class="card"><div class="card-title ${cc}">Market signals</div>${signalHtml}</div>` : ''}
     ${gapHtml}
-    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title">Sources cited</div>${srcHtml}</div>` : ''}
+    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title ${cc}">Sources cited</div>${srcHtml}</div>` : ''}
   </div>`;
 }
 
