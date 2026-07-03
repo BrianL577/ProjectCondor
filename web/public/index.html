@@ -251,7 +251,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div id="load-alert" class="alert-blue"><span class="spinner"></span> Loading latest reports...</div>
       <div id="err-alert" class="alert-red" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg> <span id="err-msg"></span></div>
       <div class="metrics">
-        <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">24</div><div class="metric-sub">US + UK/EMEA · incl. VNY &amp; TEB flagships</div></div>
+        <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">24</div><div class="metric-sub">US + UK/EMEA · incl. VNY &amp; TEB</div></div>
         <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
         <div class="metric"><div class="metric-label">Last generated</div><div class="metric-value" id="m-last" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub" id="m-last-loc">—</div></div>
         <div class="metric"><div class="metric-label">Next auto-run</div><div class="metric-value" id="m-next" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub">Monday 6 AM ET</div></div>
@@ -330,7 +330,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
               <td><span class="badge badge-us">US</span></td>
               <td>United States</td>
               <td>FAA</td>
-              <td>19 TECHNICair / FBO sites — incl. VNY &amp; TEB flagships</td>
+              <td>19 TECHNICair / FBO sites — incl. VNY &amp; TEB</td>
             </tr>
             <tr>
               <td><span class="badge badge-uk">UK</span></td>
@@ -376,7 +376,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
       <div class="card" style="border-left:3px solid var(--amber)">
         <div class="card-title" style="color:var(--amber-text)">Validation status</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.6">The links above are the authoritative sources used to generate and verify each report. KPI rows the generator cannot confirm against a named source are now <strong>omitted from report views</strong> rather than shown as "Not available" — anything unverifiable is listed under "Requires manual verification" inside the report instead. Flagship facts for VNY and TEB (operations counts, terminal counts, competitor lists) were confirmed directly against LAWA, the Port Authority of NY&amp;NJ, Signature's press room, and AIN. Remaining per-location baseline estimates in <code>scripts/generate.js</code> (market share, EBITDA context) are clearly labeled as estimates in each report — spot-check against the links above before relying on one for a decision.</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">The links above are the authoritative sources used to generate and verify each report. KPI rows the generator cannot confirm against a named source are now <strong>omitted from report views</strong> rather than shown as "Not available" — anything unverifiable is listed under "Requires manual verification" inside the report instead. Facts for VNY and TEB (operations counts, terminal counts, competitor lists) were confirmed directly against LAWA, the Port Authority of NY&amp;NJ, Signature's press room, and AIN. Remaining per-location baseline estimates in <code>scripts/generate.js</code> (market share, EBITDA context) are clearly labeled as estimates in each report — spot-check against the links above before relying on one for a decision.</p>
       </div>
     </div>
 
@@ -404,7 +404,7 @@ let idxScope = 'all';
 const FLAGSHIPS = {
   VNY: {
     code:'VNY', name:'Van Nuys Airport', city:'Los Angeles, CA', country:'US',
-    tagline:'Flagship · Los Angeles',
+    tagline:'Most popular · Los Angeles',
     context:'One of the world’s busiest general-aviation airports with 230,000+ annual takeoffs and landings (LAWA). Signature operates two terminals on the field — VNY East and VNY West — anchoring an eventual 250,000 sq ft multi-hangar campus that pairs a hybrid-use MRO and storage hangar with an executive terminal, plus a renovated fuel farm and one of the first sustainable-aviation-fuel supply chains at a US GA airport.',
     competitive:'Verified FBO competitors on the field: Clay Lacy Aviation, Castle & Cooke Aviation, Jet Aviation, and The Park VNY. Signature is the only operator with two full-service terminals at VNY, giving it the largest ramp footprint among the five operators.',
     facts:[
@@ -417,7 +417,7 @@ const FLAGSHIPS = {
   },
   TEB: {
     code:'TEB', name:'Teterboro Airport', city:'Teterboro, NJ', country:'US',
-    tagline:'Flagship · New York metro',
+    tagline:'Most popular · New York metro',
     context:'The busiest business-aviation airport in the New York metropolitan area: the Port Authority counted 177,466 total operations July 2023–July 2024, roughly 85% of them jets. Signature is the largest operator on the field with three terminals (East, West, South) after absorbing Meridian’s TEB base on January 1, 2024, and in January 2025 introduced a mandatory (free) reservation system to manage ramp congestion — a signal of demand exceeding capacity.',
     competitive:'Verified FBO competitors on the field: Atlantic Aviation and Jet Aviation (Meridian’s FBO was acquired by Signature). Jet Aviation holds the largest hangar bays; Signature holds the most terminals and ramp positions.',
     facts:[
@@ -584,7 +584,7 @@ function renderDashboard() {
     const isFlagship = !!FLAGSHIPS[r.location_code];
     const isTop = top && top.code === r.location_code;
     return `<div class="dash-card ${cc}${isFlagship?' flagship':''}" onclick="showReportInDash('${r.id}')">
-      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px">${esc(r.location_code)}</span>${isFlagship?'<span class="badge badge-gold">★ Flagship</span>':''}${isTop?'<span class="badge badge-flag">⚑ Top</span>':''}</div>
+      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px">${esc(r.location_code)}</span>${isFlagship?'<span class="badge badge-gold">★ Most popular</span>':''}${isTop?'<span class="badge badge-flag">⚑ Highest performing this week</span>':''}</div>
       <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)} · <span class="badge badge-on-${cc}">${esc(r.country)}</span></div>
       ${preview ? `<div class="dash-card-preview">${esc(preview)}</div>` : ''}
     </div>`;
@@ -978,7 +978,7 @@ function renderLeaderboard() {
       const cc = r.country === 'UK' ? 'uk' : 'us';
       const dcls = r.delta == null ? 'flat' : r.delta > 0.05 ? 'up' : r.delta < -0.05 ? 'down' : 'flat';
       const dtxt = r.delta == null ? '—' : `${r.delta>0?'▲ +':r.delta<0?'▼ ':''}${r.delta.toFixed(1)}`;
-      const flags = (i === 0 ? '<span class="badge badge-flag">⚑ Top performer</span> ' : '') + (FLAGSHIPS[r.code] ? '<span class="badge badge-gold">★ Flagship</span>' : '');
+      const flags = (i === 0 ? '<span class="badge badge-flag">⚑ Highest performing this week</span> ' : '') + (FLAGSHIPS[r.code] ? '<span class="badge badge-gold">★ Most popular</span>' : '');
       return `<tr><td>${i+1}</td><td><span class="country-dot ${cc}"></span><strong>${esc(r.code)}</strong> ${esc(r.name)}</td><td>${esc(r.type||'')}</td><td class="ldr-score">${r.score.toFixed(1)}</td><td class="ldr-delta ${dcls}">${dtxt}</td><td>${flags}</td></tr>`;
     }).join('') + '</tbody>';
 }
@@ -992,7 +992,7 @@ function renderSpotlight() {
   el.innerHTML = `<div class="spotlight-grid">` + Object.values(FLAGSHIPS).map(f => {
     const isTop = top && top.code === f.code;
     return `<div class="spotlight">
-      <h3>${esc(f.name)} <span style="opacity:.6;font-weight:600;font-size:12px">${esc(f.code)}</span> <span class="badge badge-gold">★ Flagship</span>${isTop?' <span class="badge badge-flag">⚑ Most successful</span>':''}</h3>
+      <h3>${esc(f.name)} <span style="opacity:.6;font-weight:600;font-size:12px">${esc(f.code)}</span> <span class="badge badge-gold">★ Most popular</span>${isTop?' <span class="badge badge-flag">⚑ Highest performing this week</span>':''}</h3>
       <div class="spot-sub">${esc(f.tagline)}</div>
       <p>${esc(f.context)}</p>
       <div class="spot-facts">${f.facts.map(x=>`<div class="spot-fact"><div class="sf-label">${esc(x.label)}</div><div class="sf-value">${esc(x.value)}</div><div class="sf-src">${esc(x.src)}</div></div>`).join('')}</div>
