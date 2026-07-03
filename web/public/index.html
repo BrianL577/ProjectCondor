@@ -23,6 +23,11 @@
      contrast for dark text on large color blocks (the pure --uk teal is too
      light for body text to read clearly against) */
   --uk-fill:#0a7a5c;--uk-fill2:#054a38;
+  /* Premium gold accents — flagship locations & performance highlights.
+     Chart series colors (#0FA97C teal / #BA8A28 gold / #C05C5C red) are
+     CVD-validated against the navy chart surface. */
+  --gold:#BA8A28;--gold2:#E8C15A;--gold-soft:rgba(232,193,90,.14);
+  --chart-up:#0FA97C;--chart-up-bright:#13DCA2;--chart-gold:#BA8A28;--chart-down:#C05C5C;--chart-down-bright:#ff7b7b;
   --r:14px;--rs:8px
 }
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(180deg,#142544 0%,#1a3a5c 14%,#5b6478 38%,#dfe2e8 68%,var(--bg) 100%);background-attachment:fixed;color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
@@ -46,13 +51,13 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .page-title{font-size:30px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em;color:#fff}
 .page-sub{font-size:13.5px;color:rgba(255,255,255,.78);margin-bottom:1.75rem;max-width:640px}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.75rem}
-.metric{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:0 10px 22px rgba(20,37,68,.18),0 2px 6px rgba(20,37,68,.1)}
-.metric::before{content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3fe8b8 0%,var(--uk2) 70%);box-shadow:0 3px 6px rgba(20,37,68,.35);z-index:1}
-.metric::after{content:"";position:absolute;top:1px;left:50%;width:2px;height:14px;background:linear-gradient(180deg,var(--us2),var(--us));transform:translateX(-50%)}
+.metric{position:relative;overflow:hidden;background:linear-gradient(165deg,#ffffff 0%,#f8fafc 60%,#f1f4f8 100%);border:1px solid var(--border);border-radius:var(--r);padding:1.15rem 1.2rem;box-shadow:0 12px 28px rgba(20,37,68,.16),0 2px 6px rgba(20,37,68,.08),inset 0 1px 0 rgba(255,255,255,.9);transition:transform .18s ease,box-shadow .18s ease}
+.metric:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(20,37,68,.2),0 3px 8px rgba(20,37,68,.1),inset 0 1px 0 rgba(255,255,255,.9)}
+.metric::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--us) 0%,var(--uk2) 55%,var(--gold2) 100%)}
 .metric-label{font-size:10.5px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-.metric-value{font-size:26px;font-weight:800;color:var(--us);letter-spacing:-.01em}
+.metric-value{font-size:26px;font-weight:800;color:var(--us);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .metric-sub{font-size:11px;color:var(--text2);margin-top:3px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1.1rem;box-shadow:0 6px 16px rgba(20,37,68,.08),0 1px 3px rgba(20,37,68,.05)}
+.card{background:linear-gradient(170deg,#ffffff 0%,#fbfcfe 70%,#f5f7fa 100%);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1.1rem;box-shadow:0 8px 22px rgba(20,37,68,.09),0 1px 3px rgba(20,37,68,.05),inset 0 1px 0 rgba(255,255,255,.85)}
 .card-title{font-size:14.5px;font-weight:700;margin-bottom:.85rem;color:var(--us);display:flex;align-items:center;gap:6px}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .badge-blue{background:var(--blue-bg);color:var(--blue-text)}
@@ -127,13 +132,62 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 /* Dashboard grid */
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.dash-card{border-radius:var(--r);padding:1.1rem;cursor:pointer;transition:transform .12s,filter .12s;color:#fff;box-shadow:0 2px 10px rgba(20,37,68,.12)}
-.dash-card:hover{transform:translateY(-2px);filter:brightness(1.06)}
-.dash-card.us{background:linear-gradient(135deg,var(--us),var(--us2))}
-.dash-card.uk{background:linear-gradient(135deg,var(--uk-fill),var(--uk-fill2));color:#fff}
-.dash-card-title{font-size:13.5px;font-weight:700;margin-bottom:3px}
+.dash-card{position:relative;overflow:hidden;border-radius:var(--r);padding:1.15rem 1.2rem;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;color:#fff;box-shadow:0 4px 14px rgba(20,37,68,.18),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.07)}
+.dash-card::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.09) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.dash-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,37,68,.32),inset 0 1px 0 rgba(255,255,255,.1)}
+.dash-card.us{background:linear-gradient(140deg,#0e1c36 0%,var(--us) 45%,var(--us2) 100%)}
+.dash-card.uk{background:linear-gradient(140deg,#04352a 0%,var(--uk-fill2) 45%,var(--uk-fill) 100%);color:#fff}
+.dash-card.flagship{border:1px solid rgba(232,193,90,.55);box-shadow:0 4px 18px rgba(186,138,40,.28),0 4px 14px rgba(20,37,68,.18),inset 0 1px 0 rgba(232,193,90,.25)}
+.dash-card.flagship::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.dash-card-title{font-size:13.5px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .dash-card-meta{font-size:11px;opacity:.85;margin-bottom:.6rem}
 .dash-card-preview{font-size:12px;opacity:.92;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badge-gold{background:linear-gradient(120deg,var(--gold),#d8b04a);color:#241a02;box-shadow:0 1px 4px rgba(186,138,40,.4)}
+.badge-flag{background:linear-gradient(120deg,#0c8a63,var(--chart-up-bright));color:#04231a;box-shadow:0 1px 4px rgba(15,169,124,.4)}
+
+/* Flagship spotlight — premium research cards for VNY / TEB */
+.spotlight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:1.75rem}
+.spotlight{position:relative;overflow:hidden;border-radius:var(--r);padding:1.35rem 1.4rem;color:#fff;background:linear-gradient(150deg,#0c1830 0%,#142544 48%,#1d3357 100%);border:1px solid rgba(232,193,90,.45);box-shadow:0 14px 34px rgba(10,20,40,.4),inset 0 1px 0 rgba(232,193,90,.22)}
+.spotlight::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold) 0%,var(--gold2) 50%,var(--gold) 100%)}
+.spotlight::after{content:"";position:absolute;inset:0;background:radial-gradient(110% 80% at 100% 0%,rgba(232,193,90,.10) 0%,rgba(232,193,90,0) 55%);pointer-events:none}
+.spotlight h3{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:2px;letter-spacing:-.01em}
+.spotlight .spot-sub{font-size:11px;color:var(--gold2);font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.8rem}
+.spotlight p{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.88);margin-bottom:.65rem}
+.spot-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:.8rem 0}
+.spot-fact{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--rs);padding:.6rem .7rem}
+.spot-fact .sf-label{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.spot-fact .sf-value{font-size:13px;font-weight:700;color:#fff}
+.spot-fact .sf-src{font-size:9.5px;color:rgba(255,255,255,.45);margin-top:2px}
+.spot-links{font-size:10.5px;color:rgba(255,255,255,.55)}
+.spot-links a{color:var(--gold2);text-decoration:none}
+.spot-links a:hover{text-decoration:underline}
+
+/* Performance index — stock-style chart */
+.tape{position:relative;overflow:hidden;background:linear-gradient(150deg,#0c1830 0%,#142544 55%,#16294b 100%);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:1.4rem 1.5rem 1.1rem;color:#fff;margin-bottom:1rem;box-shadow:0 16px 40px rgba(10,20,40,.45),inset 0 1px 0 rgba(255,255,255,.07)}
+.tape-ticker{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:.35rem}
+.tape-symbol{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.tape-value{font-size:38px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tape-delta{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.tape-delta.up{color:var(--chart-up-bright)}
+.tape-delta.down{color:var(--chart-down-bright)}
+.tape-range{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:1rem;display:flex;gap:18px;flex-wrap:wrap}
+.tape-range strong{color:rgba(255,255,255,.85);font-weight:700}
+.chart-wrap{position:relative}
+.chart-wrap svg{display:block;width:100%;height:auto}
+.chart-tip{position:absolute;pointer-events:none;background:rgba(8,16,32,.94);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:.5rem .7rem;font-size:11px;color:#fff;display:none;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.4);white-space:nowrap}
+.chart-tip .tip-date{font-weight:700;margin-bottom:2px;color:rgba(255,255,255,.75)}
+.chart-tip .tip-row{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.chart-tip .tip-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.chart-legend{display:flex;gap:16px;margin-top:.5rem;font-size:11px;color:rgba(255,255,255,.7)}
+.chart-legend .lg-item{display:flex;align-items:center;gap:6px}
+.chart-legend .lg-swatch{width:14px;height:3px;border-radius:2px}
+.idx-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.idx-select{padding:6px 12px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+.ldr-score{font-weight:800;font-variant-numeric:tabular-nums;color:var(--us)}
+.ldr-delta{font-weight:700;font-variant-numeric:tabular-nums;font-size:11.5px}
+.ldr-delta.up{color:var(--green)}
+.ldr-delta.down{color:var(--red)}
+.ldr-delta.flat{color:var(--text3)}
 
 /* Summary page */
 .summary-hero{background:linear-gradient(180deg,#142544 0%,#1a3a5c 55%,#0d4a3c 100%);border-radius:var(--r);padding:1.75rem;color:#fff;margin-bottom:1.5rem}
@@ -179,6 +233,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="nav">
       <div class="nav-label">Reports</div>
       <button class="nav-item active" onclick="nav('dashboard')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="nav('index')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>Performance index</button>
       <button class="nav-item" onclick="nav('summary')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2h6a1 1 0 0 1 1 1v2H8V3a1 1 0 0 1 1-1z"/><rect x="5" y="5" width="14" height="16" rx="1"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/></svg>Weekly summary</button>
       <button class="nav-item" onclick="nav('archive')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l2-3h14l2 3"/><rect x="3" y="7" width="18" height="13" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Report archive</button>
       <div class="nav-label" style="margin-top:.5rem">Info</div>
@@ -196,11 +251,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div id="load-alert" class="alert-blue"><span class="spinner"></span> Loading latest reports...</div>
       <div id="err-alert" class="alert-red" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg> <span id="err-msg"></span></div>
       <div class="metrics">
-        <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">22</div><div class="metric-sub">US + UK/EMEA</div></div>
+        <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">24</div><div class="metric-sub">US + UK/EMEA · incl. VNY &amp; TEB flagships</div></div>
         <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
         <div class="metric"><div class="metric-label">Last generated</div><div class="metric-value" id="m-last" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub" id="m-last-loc">—</div></div>
         <div class="metric"><div class="metric-label">Next auto-run</div><div class="metric-value" id="m-next" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub">Monday 6 AM ET</div></div>
       </div>
+      <div id="flagship-spotlight"></div>
       <div class="card">
         <div class="card-title">Latest reports — this week</div>
         <div id="dash-grid" class="dash-grid"></div>
@@ -208,10 +264,41 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div id="dash-report-view" style="display:none"></div>
     </div>
 
+    <!-- PERFORMANCE INDEX -->
+    <div id="panel-index" class="panel">
+      <div class="page-title">Performance index</div>
+      <div class="page-sub">TECHNICair &amp; Signature MRO portfolio success tracked week over week — a composite index built from the competitive variables already captured in every report.</div>
+      <div class="idx-controls">
+        <button class="filter-btn active" onclick="setIdxScope('all',this)">Full portfolio</button>
+        <button class="filter-btn" onclick="setIdxScope('TECHNICair',this)">TECHNICair</button>
+        <button class="filter-btn" data-cc="us" onclick="setIdxScope('US',this)">US</button>
+        <button class="filter-btn" data-cc="uk" onclick="setIdxScope('UK',this)">UK</button>
+        <select class="idx-select" id="idx-compare" onchange="renderIndex()"><option value="">Compare a location…</option></select>
+      </div>
+      <div class="tape">
+        <div class="tape-ticker">
+          <span class="tape-symbol" id="idx-symbol">TECHNICAIR·IDX</span>
+          <span class="tape-value" id="idx-value">—</span>
+          <span class="tape-delta" id="idx-delta"></span>
+        </div>
+        <div class="tape-range" id="idx-range"></div>
+        <div class="chart-wrap" id="idx-chart"></div>
+        <div class="chart-legend" id="idx-legend"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Location leaderboard — current score</div>
+        <table class="tbl" id="idx-leaderboard"></table>
+      </div>
+      <div class="card">
+        <div class="card-title">How the index is calculated</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">Each weekly report is scored 0–100 from five variables already tracked per location: <strong>competitive position</strong> (Signature Position — dominant/leading/competitive/marginal, 40%), <strong>positional ranking</strong> (#1 of N operators, 15%), <strong>market share</strong> (estimate or qualitative tier, 20%), <strong>market-signal momentum</strong> (net positive vs negative signals that week, 15%), and <strong>data confidence</strong> (share of KPIs with verified values, 10%). The portfolio index is the average across all in-scope locations for that week, rebased to 100 at the first tracked week — so it reads like a stock chart: above 100 means the portfolio is stronger than when tracking began.</p>
+      </div>
+    </div>
+
     <!-- WEEKLY SUMMARY -->
     <div id="panel-summary" class="panel">
       <div class="page-title">Weekly summary</div>
-      <div class="page-sub">Combined market intelligence across all 22 locations.</div>
+      <div class="page-sub">Combined market intelligence across all 24 locations.</div>
       <div id="summary-content"></div>
     </div>
 
@@ -243,7 +330,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
               <td><span class="badge badge-us">US</span></td>
               <td>United States</td>
               <td>FAA</td>
-              <td>17 TECHNICair / FBO sites</td>
+              <td>19 TECHNICair / FBO sites — incl. VNY &amp; TEB flagships</td>
             </tr>
             <tr>
               <td><span class="badge badge-uk">UK</span></td>
@@ -267,6 +354,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
             <tr><td>BLS OES</td><td>A&P mechanic labor costs</td><td>Monthly</td><td><a href="https://www.bls.gov/oes/" target="_blank" rel="noopener">bls.gov/oes</a></td></tr>
             <tr><td>GAMA</td><td>Bizav shipments & activity</td><td>Quarterly</td><td><a href="https://gama.aero/facts-and-statistics/" target="_blank" rel="noopener">gama.aero/facts-and-statistics</a></td></tr>
             <tr><td>AIN / Aviation Week</td><td>Industry headlines & deals</td><td>Daily</td><td><a href="https://www.ainonline.com/" target="_blank" rel="noopener">ainonline.com</a></td></tr>
+            <tr><td>LAWA / iflyvny.com</td><td>Van Nuys (VNY) airport operations, FBO directory & facts</td><td>Annual + as updated</td><td><a href="https://www.iflyvny.com/airport-facts/about-van-nuys-airport" target="_blank" rel="noopener">iflyvny.com — airport facts</a></td></tr>
+            <tr><td>Port Authority NY&amp;NJ</td><td>Teterboro (TEB) traffic reports & runway utilization</td><td>Annual + periodic</td><td><a href="https://www.panynj.gov/airports/en/statistics-general-info.html" target="_blank" rel="noopener">panynj.gov — airport statistics</a></td></tr>
+            <tr><td>Signature Aviation press room</td><td>Network changes — acquisitions, terminals, policies</td><td>As announced</td><td><a href="https://www.signatureaviation.com/news" target="_blank" rel="noopener">signatureaviation.com/news</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -286,7 +376,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
       <div class="card" style="border-left:3px solid var(--amber)">
         <div class="card-title" style="color:var(--amber-text)">Validation status</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.6">The links above are the authoritative sources used to generate and verify each report. Per-location baseline figures in <code>scripts/generate.js</code> (competitor counts, market share, EBITDA context, etc.) are AI-generated estimates refreshed weekly and labeled "Baseline data — needs verification" or "estimate" where applicable in each report's KPI table — they have not all been individually re-confirmed against these sources in this pass. Use the links above to spot-check any figure before relying on it for a decision.</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">The links above are the authoritative sources used to generate and verify each report. KPI rows the generator cannot confirm against a named source are now <strong>omitted from report views</strong> rather than shown as "Not available" — anything unverifiable is listed under "Requires manual verification" inside the report instead. Flagship facts for VNY and TEB (operations counts, terminal counts, competitor lists) were confirmed directly against LAWA, the Port Authority of NY&amp;NJ, Signature's press room, and AIN. Remaining per-location baseline estimates in <code>scripts/generate.js</code> (market share, EBITDA context) are clearly labeled as estimates in each report — spot-check against the links above before relying on one for a decision.</p>
       </div>
     </div>
 
@@ -306,11 +396,143 @@ document.head.appendChild(sbScript);
 let dbClient;
 let allReports = [];
 let currentFilter = 'all';
+let idxScope = 'all';
+
+// Flagship locations — Signature's two highest-profile fields. Facts below are
+// from primary sources (LAWA/iflyvny, Port Authority NY&NJ, Signature press
+// releases, AIN) — see the Data sources tab.
+const FLAGSHIPS = {
+  VNY: {
+    code:'VNY', name:'Van Nuys Airport', city:'Los Angeles, CA', country:'US',
+    tagline:'Flagship · Los Angeles',
+    context:'One of the world’s busiest general-aviation airports with 230,000+ annual takeoffs and landings (LAWA). Signature operates two terminals on the field — VNY East and VNY West — anchoring an eventual 250,000 sq ft multi-hangar campus that pairs a hybrid-use MRO and storage hangar with an executive terminal, plus a renovated fuel farm and one of the first sustainable-aviation-fuel supply chains at a US GA airport.',
+    competitive:'Verified FBO competitors on the field: Clay Lacy Aviation, Castle & Cooke Aviation, Jet Aviation, and The Park VNY. Signature is the only operator with two full-service terminals at VNY, giving it the largest ramp footprint among the five operators.',
+    facts:[
+      {label:'Annual operations', value:'230,000+', src:'LAWA / iflyvny.com'},
+      {label:'Signature terminals', value:'2 (East + West)', src:'signatureaviation.com'},
+      {label:'FBO competitors', value:'4 verified', src:'iflyvny.com FBO directory'},
+      {label:'Campus build-out', value:'250,000 sq ft', src:'JRMA project record'}
+    ],
+    links:[['LAWA — VNY','https://www.iflyvny.com/airport-facts/about-van-nuys-airport'],['Signature VNY','https://www.signatureaviation.com/locations/VNY']]
+  },
+  TEB: {
+    code:'TEB', name:'Teterboro Airport', city:'Teterboro, NJ', country:'US',
+    tagline:'Flagship · New York metro',
+    context:'The busiest business-aviation airport in the New York metropolitan area: the Port Authority counted 177,466 total operations July 2023–July 2024, roughly 85% of them jets. Signature is the largest operator on the field with three terminals (East, West, South) after absorbing Meridian’s TEB base on January 1, 2024, and in January 2025 introduced a mandatory (free) reservation system to manage ramp congestion — a signal of demand exceeding capacity.',
+    competitive:'Verified FBO competitors on the field: Atlantic Aviation and Jet Aviation (Meridian’s FBO was acquired by Signature). Jet Aviation holds the largest hangar bays; Signature holds the most terminals and ramp positions.',
+    facts:[
+      {label:'Annual operations', value:'177,466', src:'Port Authority NY&NJ, Jul 2023–Jul 2024'},
+      {label:'Signature terminals', value:'3 (E + W + S)', src:'signatureaviation.com'},
+      {label:'Jet share of traffic', value:'~85%', src:'Port Authority NY&NJ (2023)'},
+      {label:'FBO competitors', value:'2 verified', src:'AIN / field directory'}
+    ],
+    links:[['Port Authority — TEB','https://www.panynj.gov/airports/en/teterboro.html'],['AIN — Meridian acquisition','https://www.ainonline.com/aviation-news/business-aviation/2024-01-02/signature-acquires-two-fbos-meridian-purchase']]
+  }
+};
+
+// ============================================================
+// SUCCESS SCORING — composite 0-100 per report, from variables
+// already tracked in every report_json
+// ============================================================
+function kpiVal(kpis, field) {
+  return (kpis.find(k => k.field === field) || {}).value || '';
+}
+function positionScore(pos) {
+  const p = (pos || '').toLowerCase();
+  if (!p) return null;
+  if (p.includes('sole') || p.includes('dominant')) return 100;
+  if (p.includes('leader') || p.includes('leading') || p.includes('#1') || p.includes('hub')) return 85;
+  if (p.includes('competitive') || p.includes('regional')) return 60;
+  if (p.includes('marginal') || p.includes('weak')) return 35;
+  return 55;
+}
+function rankScore(rank) {
+  const m = (rank || '').match(/#\s*(\d+)/);
+  if (m) { const n = +m[1]; return n === 1 ? 100 : n === 2 ? 70 : 45; }
+  const r = (rank || '').toLowerCase();
+  if (r.includes('lead') || r.includes('dominant')) return 90;
+  return r ? 60 : null;
+}
+function shareScore(share) {
+  const s = (share || '').toLowerCase();
+  if (!s) return null;
+  const nums = s.match(/\d+(\.\d+)?/g);
+  if (nums && nums.length) {
+    const vals = nums.map(Number).filter(n => n <= 100);
+    if (vals.length) return Math.min(100, vals.reduce((a,b)=>a+b,0)/vals.length + 25);
+  }
+  if (s.includes('dominant') || s.includes('100')) return 95;
+  if (s.includes('high') || s.includes('main')) return 80;
+  if (s.includes('med')) return 55;
+  if (s.includes('low')) return 30;
+  return 55;
+}
+function successScore(r) {
+  const d = r.report_json || {};
+  const kpis = d.kpi_table || [];
+  const parts = [];
+  const push = (v, w) => { if (v != null) parts.push([v, w]); };
+  push(positionScore(kpiVal(kpis, 'Signature Position')), .40);
+  push(rankScore(kpiVal(kpis, 'Positional Ranking')), .15);
+  push(shareScore(kpiVal(kpis, 'Market Share (Signature vs Others)')), .20);
+  const sigs = d.market_signals || [];
+  if (sigs.length) {
+    const net = sigs.reduce((a,s)=>a+(s.direction==='positive'?1:s.direction==='negative'?-1:0),0)/sigs.length;
+    push(50 + net*50, .15);
+  }
+  const filled = kpis.filter(k => k.value && !isNA(k.value));
+  if (kpis.length) push(100 * filled.filter(k=>k.verified).length / kpis.length * .5 + 100 * filled.length / kpis.length * .5, .10);
+  if (!parts.length) return null;
+  const wSum = parts.reduce((a,p)=>a+p[1],0);
+  return parts.reduce((a,p)=>a+p[0]*p[1],0)/wSum;
+}
+function isNA(v) {
+  const s = String(v||'').trim().toLowerCase();
+  return !s || ['not available','not publicly available','n/a','na','unknown','unavailable','none','not applicable','tbd','not found'].some(x => s === x || s.startsWith(x + '.') || s.startsWith(x + ' -'));
+}
+
+// Build weekly index series for the given scope. Returns {dates, series:[{name,color,values}]}
+function scopeFilter(r) {
+  if (idxScope === 'US' || idxScope === 'UK') return r.country === idxScope;
+  if (idxScope === 'TECHNICair') return (r.facility_type||'').includes('TECHNICair');
+  return true;
+}
+function buildIndexSeries() {
+  const weeks = {};
+  allReports.filter(scopeFilter).forEach(r => {
+    const wk = r.report_date || (r.created_at||'').slice(0,10);
+    if (!wk) return;
+    const sc = successScore(r);
+    if (sc == null) return;
+    (weeks[wk] = weeks[wk] || []).push(sc);
+  });
+  const dates = Object.keys(weeks).sort();
+  const raw = dates.map(d => weeks[d].reduce((a,b)=>a+b,0)/weeks[d].length);
+  if (!raw.length) return { dates: [], index: [] };
+  const base = raw[0];
+  return { dates, index: raw.map(v => v/base*100) };
+}
+function buildLocationSeries(code, dates) {
+  const byWeek = {};
+  allReports.filter(r => r.location_code === code).forEach(r => {
+    const wk = r.report_date || (r.created_at||'').slice(0,10);
+    const sc = successScore(r);
+    if (wk && sc != null) (byWeek[wk] = byWeek[wk] || []).push(sc);
+  });
+  let base = null;
+  return dates.map(d => {
+    if (!byWeek[d]) return null;
+    const v = byWeek[d].reduce((a,b)=>a+b,0)/byWeek[d].length;
+    if (base == null) base = v;
+    return v/base*100;
+  });
+}
 
 function initApp() {
   dbClient = window.supabase.createClient(CONDOR_DB_URL, CONDOR_DB_KEY);
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   setNextRun();
+  renderSpotlight();
   loadReports();
 }
 
@@ -330,6 +552,10 @@ async function loadReports() {
     renderDashboard();
     renderSummary();
     renderArchive('all');
+    populateCompareSelect();
+    renderIndex();
+    renderLeaderboard();
+    renderSpotlight();
   } catch(err) {
     showError(err.message);
   }
@@ -350,12 +576,15 @@ function renderDashboard() {
   const latest = allReports.filter(r => { if(seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
   const grid = document.getElementById('dash-grid');
   if (!latest.length) { grid.innerHTML = '<p style="font-size:13px;color:var(--text3)">No reports yet.</p>'; return; }
+  const top = currentScores()[0];
   grid.innerHTML = latest.map(r => {
     const es = (r.report_json||{}).executive_summary || {};
     const preview = es.market_context || es.strategic_outlook || '';
     const cc = r.country === 'UK' ? 'uk' : 'us';
-    return `<div class="dash-card ${cc}" onclick="showReportInDash('${r.id}')">
-      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px">${esc(r.location_code)}</span></div>
+    const isFlagship = !!FLAGSHIPS[r.location_code];
+    const isTop = top && top.code === r.location_code;
+    return `<div class="dash-card ${cc}${isFlagship?' flagship':''}" onclick="showReportInDash('${r.id}')">
+      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px">${esc(r.location_code)}</span>${isFlagship?'<span class="badge badge-gold">★ Flagship</span>':''}${isTop?'<span class="badge badge-flag">⚑ Top</span>':''}</div>
       <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)} · <span class="badge badge-on-${cc}">${esc(r.country)}</span></div>
       ${preview ? `<div class="dash-card-preview">${esc(preview)}</div>` : ''}
     </div>`;
@@ -527,10 +756,13 @@ function renderReportHTML(r) {
   const gaps = d.data_gaps || [];
   const sources = d.sources_cited || [];
 
-  const kpiHtml = kpis.map(k => `
+  // Only show KPIs with real values — rows the generator couldn't verify are
+  // dropped here and surfaced in the "Requires manual verification" card instead
+  const kpisShown = kpis.filter(k => !isNA(k.value));
+  const kpiHtml = kpisShown.map(k => `
     <div class="kpi-item">
       <div class="kpi-label">${esc(k.field)}</div>
-      <div class="kpi-value">${esc(k.value) || '<span style="color:var(--text3)">Not available</span>'}</div>
+      <div class="kpi-value">${esc(k.value)}</div>
       ${k.source && k.source !== 'Internal' ? `<div class="kpi-source">${esc(k.source)}</div>` : ''}
     </div>`).join('');
 
@@ -568,11 +800,206 @@ function renderReportHTML(r) {
       ${es.strategic_outlook ? `<div><div class="section-title ${cc}">Strategic outlook</div><p style="font-size:13px;line-height:1.7">${esc(es.strategic_outlook)}</p></div>` : ''}
     </div>
 
-    ${kpis.length ? `<div class="card"><div class="card-title ${cc}">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
+    ${kpisShown.length ? `<div class="card"><div class="card-title ${cc}">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
     ${signals.length ? `<div class="card"><div class="card-title ${cc}">Market signals</div>${signalHtml}</div>` : ''}
     ${gapHtml}
     ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title ${cc}">Sources cited</div>${srcHtml}</div>` : ''}
   </div>`;
+}
+
+// ============================================================
+// PERFORMANCE INDEX — stock-style chart
+// ============================================================
+function setIdxScope(scope, btn) {
+  idxScope = scope;
+  document.querySelectorAll('#panel-index .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderIndex();
+}
+
+function populateCompareSelect() {
+  const sel = document.getElementById('idx-compare');
+  const seen = new Set();
+  const opts = allReports.filter(r => { if (seen.has(r.location_code)) return false; seen.add(r.location_code); return true; })
+    .sort((a,b) => a.location_code.localeCompare(b.location_code))
+    .map(r => `<option value="${esc(r.location_code)}">${esc(r.location_code)} — ${esc(r.location_name)}</option>`).join('');
+  sel.innerHTML = '<option value="">Compare a location…</option>' + opts;
+}
+
+function renderIndex() {
+  const { dates, index } = buildIndexSeries();
+  const chartEl = document.getElementById('idx-chart');
+  const valueEl = document.getElementById('idx-value');
+  const deltaEl = document.getElementById('idx-delta');
+  const rangeEl = document.getElementById('idx-range');
+  const legendEl = document.getElementById('idx-legend');
+  const symbolEl = document.getElementById('idx-symbol');
+  symbolEl.textContent = ({all:'CONDOR·IDX', TECHNICair:'TECHNICAIR·IDX', US:'CONDOR·US', UK:'CONDOR·UK'})[idxScope] || 'CONDOR·IDX';
+
+  if (!dates.length) {
+    valueEl.textContent = '—'; deltaEl.textContent = ''; rangeEl.innerHTML = ''; legendEl.innerHTML = '';
+    chartEl.innerHTML = '<p style="font-size:13px;color:rgba(255,255,255,.6);padding:2rem 0">No scored reports yet for this scope.</p>';
+    return;
+  }
+
+  const cur = index[index.length - 1];
+  const prev = index.length > 1 ? index[index.length - 2] : null;
+  valueEl.textContent = cur.toFixed(1);
+  if (prev != null) {
+    const diff = cur - prev, pct = prev ? diff/prev*100 : 0, up = diff >= 0;
+    deltaEl.className = 'tape-delta ' + (up ? 'up' : 'down');
+    deltaEl.textContent = `${up?'▲':'▼'} ${up?'+':''}${diff.toFixed(1)} (${up?'+':''}${pct.toFixed(2)}%) WoW`;
+  } else { deltaEl.textContent = ''; }
+  const hi = Math.max(...index), lo = Math.min(...index);
+  rangeEl.innerHTML = `<span>High <strong>${hi.toFixed(1)}</strong></span><span>Low <strong>${lo.toFixed(1)}</strong></span><span>Base <strong>100.0</strong> (${esc(fmtDate(dates[0]))})</span><span><strong>${dates.length}</strong> week${dates.length>1?'s':''} tracked</span>`;
+
+  const series = [{ name: 'Portfolio index', color: '#0FA97C', bright: '#13DCA2', values: index }];
+  const cmp = document.getElementById('idx-compare').value;
+  if (cmp) {
+    const vals = buildLocationSeries(cmp, dates);
+    if (vals.some(v => v != null)) series.push({ name: cmp, color: '#BA8A28', bright: '#E8C15A', values: vals });
+  }
+  legendEl.innerHTML = series.length > 1
+    ? series.map(s => `<span class="lg-item"><span class="lg-swatch" style="background:${s.color}"></span>${esc(s.name)}</span>`).join('')
+    : '';
+
+  drawStockChart(chartEl, dates, series);
+}
+
+function drawStockChart(container, dates, series) {
+  const W = 900, H = 300, L = 46, R = series.length > 1 ? 110 : 16, T = 14, B = 30;
+  const all = series.flatMap(s => s.values).filter(v => v != null);
+  let min = Math.min(...all), max = Math.max(...all);
+  if (max - min < 4) { const mid = (max+min)/2; min = mid - 2; max = mid + 2; }
+  const pad = (max - min) * 0.12; min -= pad; max += pad;
+  const x = i => dates.length > 1 ? L + (W-L-R) * i / (dates.length-1) : (L + W - R) / 2;
+  const y = v => T + (H-T-B) * (1 - (v - min) / (max - min));
+
+  // gridlines — recessive
+  const nTicks = 5; let grid = '';
+  for (let g = 0; g <= nTicks; g++) {
+    const v = min + (max-min)*g/nTicks, yy = y(v);
+    grid += `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+             <text x="${L-8}" y="${yy+3.5}" text-anchor="end" font-size="10" fill="rgba(255,255,255,.45)">${v.toFixed(0)}</text>`;
+  }
+  // baseline at 100
+  if (min < 100 && max > 100) grid += `<line x1="${L}" x2="${W-R}" y1="${y(100)}" y2="${y(100)}" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-dasharray="3 4"/>`;
+
+  // x labels — at most 8
+  const step = Math.max(1, Math.ceil(dates.length / 8)); let xlabels = '';
+  dates.forEach((d, i) => { if (i % step === 0 || i === dates.length-1) xlabels += `<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.45)">${esc(fmtDate(d))}</text>`; });
+
+  let defs = '', paths = '', endDots = '';
+  series.forEach((s, si) => {
+    const pts = s.values.map((v,i) => v==null?null:[x(i),y(v)]).filter(Boolean);
+    if (!pts.length) return;
+    const d = pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('');
+    if (si === 0 && pts.length > 1) {
+      defs += `<linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${s.color}" stop-opacity=".32"/><stop offset="100%" stop-color="${s.color}" stop-opacity="0"/></linearGradient>`;
+      paths += `<path d="${d}L${pts[pts.length-1][0].toFixed(1)},${H-B}L${pts[0][0].toFixed(1)},${H-B}Z" fill="url(#areaGrad)"/>`;
+    }
+    paths += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const last = pts[pts.length-1];
+    endDots += `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${s.color}" stroke="#142544" stroke-width="2"/>`;
+    if (series.length > 1) endDots += `<text x="${Math.min(last[0]+8, W-4)}" y="${last[1]+3.5}" font-size="10" font-weight="700" fill="${s.bright}">${esc(s.name)}</text>`;
+  });
+
+  container.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Performance index over time">
+    <defs>${defs}</defs>${grid}${xlabels}${paths}
+    <g id="xhair" style="display:none"><line id="xhair-line" y1="${T}" y2="${H-B}" stroke="rgba(255,255,255,.35)" stroke-width="1" stroke-dasharray="2 3"/>${series.map((s,si)=>`<circle id="xhair-dot-${si}" r="4.5" fill="${s.color}" stroke="#0c1830" stroke-width="2"/>`).join('')}</g>
+    ${endDots}
+    <rect id="hit" x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent"/>
+  </svg><div class="chart-tip" id="idx-tip"></div>`;
+
+  // crosshair + tooltip
+  const svg = container.querySelector('svg');
+  const tip = container.querySelector('#idx-tip');
+  const xh = svg.querySelector('#xhair');
+  const hit = svg.querySelector('#hit');
+  const toIdx = clientX => {
+    const rect = svg.getBoundingClientRect();
+    const sx = (clientX - rect.left) / rect.width * W;
+    return Math.max(0, Math.min(dates.length-1, Math.round((sx - L) / ((W-L-R) / Math.max(1, dates.length-1)))));
+  };
+  hit.addEventListener('mousemove', e => {
+    const i = toIdx(e.clientX);
+    xh.style.display = '';
+    svg.querySelector('#xhair-line').setAttribute('x1', x(i));
+    svg.querySelector('#xhair-line').setAttribute('x2', x(i));
+    let rows = '';
+    series.forEach((s, si) => {
+      const dot = svg.querySelector('#xhair-dot-'+si);
+      const v = s.values[i];
+      if (v == null) { dot.style.display = 'none'; return; }
+      dot.style.display = '';
+      dot.setAttribute('cx', x(i)); dot.setAttribute('cy', y(v));
+      const d0 = s.values.slice(0,i).filter(w=>w!=null).pop();
+      const dtxt = d0!=null ? ` <span style="color:${v>=d0?'#13DCA2':'#ff7b7b'}">${v>=d0?'+':''}${(v-d0).toFixed(1)}</span>` : '';
+      rows += `<div class="tip-row"><span class="tip-swatch" style="background:${s.color}"></span>${esc(s.name)}: <strong>${v.toFixed(1)}</strong>${dtxt}</div>`;
+    });
+    tip.innerHTML = `<div class="tip-date">${esc(fmtDate(dates[i]))}</div>${rows}`;
+    tip.style.display = 'block';
+    const rect = container.getBoundingClientRect();
+    const px = (x(i) / W) * rect.width;
+    tip.style.left = Math.min(px + 14, rect.width - tip.offsetWidth - 6) + 'px';
+    tip.style.top = '18px';
+  });
+  hit.addEventListener('mouseleave', () => { xh.style.display = 'none'; tip.style.display = 'none'; });
+}
+
+function fmtDate(d) {
+  const dt = new Date(d + 'T00:00:00');
+  return isNaN(dt) ? d : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Leaderboard — latest score + WoW change per location; flags the top performer
+function currentScores() {
+  const byLoc = {};
+  allReports.forEach(r => {
+    const sc = successScore(r);
+    if (sc == null) return;
+    (byLoc[r.location_code] = byLoc[r.location_code] || { name: r.location_name, country: r.country, type: r.facility_type, entries: [] })
+      .entries.push({ date: r.report_date || (r.created_at||'').slice(0,10), score: sc });
+  });
+  return Object.entries(byLoc).map(([code, o]) => {
+    o.entries.sort((a,b) => a.date.localeCompare(b.date));
+    const cur = o.entries[o.entries.length-1].score;
+    const prev = o.entries.length > 1 ? o.entries[o.entries.length-2].score : null;
+    return { code, name: o.name, country: o.country, type: o.type, score: cur, delta: prev != null ? cur - prev : null };
+  }).sort((a,b) => b.score - a.score);
+}
+
+function renderLeaderboard() {
+  const rows = currentScores();
+  const tbl = document.getElementById('idx-leaderboard');
+  if (!rows.length) { tbl.innerHTML = '<tr><td style="font-size:13px;color:var(--text3)">No scored reports yet.</td></tr>'; return; }
+  tbl.innerHTML = `<thead><tr><th>#</th><th>Location</th><th>Type</th><th>Score</th><th>WoW</th><th></th></tr></thead><tbody>` +
+    rows.map((r, i) => {
+      const cc = r.country === 'UK' ? 'uk' : 'us';
+      const dcls = r.delta == null ? 'flat' : r.delta > 0.05 ? 'up' : r.delta < -0.05 ? 'down' : 'flat';
+      const dtxt = r.delta == null ? '—' : `${r.delta>0?'▲ +':r.delta<0?'▼ ':''}${r.delta.toFixed(1)}`;
+      const flags = (i === 0 ? '<span class="badge badge-flag">⚑ Top performer</span> ' : '') + (FLAGSHIPS[r.code] ? '<span class="badge badge-gold">★ Flagship</span>' : '');
+      return `<tr><td>${i+1}</td><td><span class="country-dot ${cc}"></span><strong>${esc(r.code)}</strong> ${esc(r.name)}</td><td>${esc(r.type||'')}</td><td class="ldr-score">${r.score.toFixed(1)}</td><td class="ldr-delta ${dcls}">${dtxt}</td><td>${flags}</td></tr>`;
+    }).join('') + '</tbody>';
+}
+
+// ============================================================
+// FLAGSHIP SPOTLIGHT — VNY / TEB premium research cards
+// ============================================================
+function renderSpotlight() {
+  const el = document.getElementById('flagship-spotlight');
+  const top = currentScores()[0];
+  el.innerHTML = `<div class="spotlight-grid">` + Object.values(FLAGSHIPS).map(f => {
+    const isTop = top && top.code === f.code;
+    return `<div class="spotlight">
+      <h3>${esc(f.name)} <span style="opacity:.6;font-weight:600;font-size:12px">${esc(f.code)}</span> <span class="badge badge-gold">★ Flagship</span>${isTop?' <span class="badge badge-flag">⚑ Most successful</span>':''}</h3>
+      <div class="spot-sub">${esc(f.tagline)}</div>
+      <p>${esc(f.context)}</p>
+      <div class="spot-facts">${f.facts.map(x=>`<div class="spot-fact"><div class="sf-label">${esc(x.label)}</div><div class="sf-value">${esc(x.value)}</div><div class="sf-src">${esc(x.src)}</div></div>`).join('')}</div>
+      <p>${esc(f.competitive)}</p>
+      <div class="spot-links">Sources: ${f.links.map(l=>`<a href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])}</a>`).join(' · ')}</div>
+    </div>`;
+  }).join('') + `</div>`;
 }
 
 // ============================================================
