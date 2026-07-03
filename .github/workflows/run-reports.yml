@@ -15,12 +15,15 @@ jobs:
       - name: Install dependencies
         run: npm install --no-package-lock
 
-      - name: Generate reports for all 22 locations
+      - name: Generate reports for all locations
         run: node scripts/generate.js
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          # Free key from https://www.eia.gov/opendata/ — enables the verified
+          # weekly jet fuel price feed; the run continues without it if unset
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
 
       - name: Send weekly summary email
         run: node scripts/send_summary.js

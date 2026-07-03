@@ -188,6 +188,27 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .ldr-delta.up{color:var(--green)}
 .ldr-delta.down{color:var(--red)}
 .ldr-delta.flat{color:var(--text3)}
+.tbl-scroll{overflow-x:auto}
+
+/* What changed this week */
+.chg-row{display:flex;gap:12px;align-items:flex-start;padding:.65rem 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.chg-row:last-child{border-bottom:none}
+.chg-loc{font-size:12px;font-weight:700;color:var(--text);min-width:52px;font-family:monospace;padding-top:2px}
+.chg-items{flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px}
+.chg-item{font-size:12.5px;color:var(--text2);line-height:1.5}
+.chg-item strong{color:var(--text)}
+.chg-arrow{font-weight:700;margin-right:4px}
+.chg-arrow.positive{color:var(--green)}
+.chg-arrow.negative{color:var(--red)}
+.chg-arrow.neutral{color:var(--text3)}
+.chg-delta{font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;padding:2px 9px;border-radius:999px;align-self:flex-start;margin-top:2px}
+.chg-delta.up{background:var(--green-bg);color:var(--green-text)}
+.chg-delta.down{background:var(--red-bg);color:var(--red-text)}
+
+/* Search box */
+.search-input{width:100%;max-width:320px;padding:8px 14px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:12.5px;font-family:inherit;outline:none;transition:border-color .12s,box-shadow .12s}
+.search-input:focus{border-color:var(--uk2);box-shadow:0 0 0 3px rgba(15,138,108,.14)}
+.search-input::placeholder{color:var(--text3)}
 
 /* Summary page */
 .summary-hero{background:linear-gradient(180deg,#142544 0%,#1a3a5c 55%,#0d4a3c 100%);border-radius:var(--r);padding:1.75rem;color:#fff;margin-bottom:1.5rem}
@@ -215,10 +236,29 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   .app{flex-direction:column}
   .sidebar{width:100%;height:auto;position:static}
   .sidebar-header,.sidebar-foot,.nav-label{display:none}
-  .nav{display:flex;flex-direction:row;padding:.5rem;gap:4px;overflow-x:auto}
-  .nav-item{white-space:nowrap;padding:.4rem .75rem;border-radius:var(--rs)}
-  .main{padding:1rem}
+  .nav{display:flex;flex-direction:row;padding:.5rem;gap:4px;overflow-x:auto;flex-wrap:nowrap}
+  .nav-item{white-space:nowrap;padding:.4rem .75rem;border-radius:var(--rs);border-left:none}
+  .nav-item.active{border-left:none;box-shadow:inset 0 -2px 0 var(--uk)}
+  .main{padding:1rem;max-width:100%}
   .kpi-grid{grid-template-columns:1fr}
+  .page-title{font-size:24px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .metric-value{font-size:21px}
+  .tape{padding:1rem 1rem .8rem}
+  .tape-value{font-size:28px}
+  .tape-delta{font-size:13px}
+  .tape-range{gap:10px;font-size:10.5px}
+  .spotlight-grid{grid-template-columns:1fr}
+  .spot-facts{grid-template-columns:1fr 1fr}
+  .idx-select{max-width:100%}
+  .search-input{max-width:100%}
+  .dash-grid{grid-template-columns:1fr}
+  .summary-loc{min-width:56px}
+  .chg-loc{min-width:44px}
+}
+@media(max-width:420px){
+  .spot-facts{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr 1fr;gap:8px}
 }
 @media print{.sidebar,.filter-bar,.btn,.back-btn{display:none!important}.main{padding:.5rem}}
 </style>
@@ -255,10 +295,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
         <div class="metric"><div class="metric-label">Last generated</div><div class="metric-value" id="m-last" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub" id="m-last-loc">—</div></div>
         <div class="metric"><div class="metric-label">Next auto-run</div><div class="metric-value" id="m-next" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub">Monday 6 AM ET</div></div>
+        <div class="metric" id="m-fuel-tile" style="display:none"><div class="metric-label">Jet-A spot — Gulf Coast</div><div class="metric-value" id="m-fuel">—</div><div class="metric-sub" id="m-fuel-sub">EIA · verified weekly</div></div>
       </div>
+      <div id="changes-panel"></div>
       <div id="flagship-spotlight"></div>
       <div class="card">
-        <div class="card-title">Latest reports — this week</div>
+        <div class="card-title" style="justify-content:space-between;flex-wrap:wrap;gap:10px">Latest reports — this week
+          <input class="search-input" id="dash-search" type="search" placeholder="Search locations — code, name, city…" oninput="dashQuery=this.value;renderDashboard()" style="font-weight:400">
+        </div>
         <div id="dash-grid" class="dash-grid"></div>
       </div>
       <div id="dash-report-view" style="display:none"></div>
@@ -287,7 +331,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       </div>
       <div class="card">
         <div class="card-title">Location leaderboard — current score</div>
-        <table class="tbl" id="idx-leaderboard"></table>
+        <div class="tbl-scroll"><table class="tbl" id="idx-leaderboard"></table></div>
       </div>
       <div class="card">
         <div class="card-title">How the index is calculated</div>
@@ -306,7 +350,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div id="panel-archive" class="panel">
       <div class="page-title">Report archive</div>
       <div class="page-sub">All reports organized by week. Click a folder to expand.</div>
-      <div class="filter-bar">
+      <div class="filter-bar" style="align-items:center">
+        <input class="search-input" type="search" placeholder="Search locations…" oninput="archiveQuery=this.value;renderArchive(currentFilter)" style="max-width:220px">
         <button class="filter-btn active" onclick="filterArchive('all',this)">All</button>
         <button class="filter-btn" data-cc="us" onclick="filterArchive('US',this)">US</button>
         <button class="filter-btn" data-cc="uk" onclick="filterArchive('UK',this)">UK</button>
@@ -397,6 +442,14 @@ let dbClient;
 let allReports = [];
 let currentFilter = 'all';
 let idxScope = 'all';
+let dashQuery = '';
+let archiveQuery = '';
+
+function matchesQuery(r, q) {
+  if (!q) return true;
+  const hay = `${r.location_code} ${r.location_name} ${r.city} ${r.facility_type} ${r.country}`.toLowerCase();
+  return q.toLowerCase().split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+}
 
 // Flagship locations — Signature's two highest-profile fields. Facts below are
 // from primary sources (LAWA/iflyvny, Port Authority NY&NJ, Signature press
@@ -548,6 +601,15 @@ async function loadReports() {
       const last = allReports[0];
       document.getElementById('m-last').textContent = new Date(last.created_at).toLocaleDateString();
       document.getElementById('m-last-loc').textContent = `${last.location_name} (${last.location_code})`;
+      const fuel = allReports.map(r => (r.report_json||{}).ground_truth?.jetFuel).find(Boolean);
+      if (fuel && fuel.priceUsdGal != null) {
+        document.getElementById('m-fuel-tile').style.display = '';
+        document.getElementById('m-fuel').textContent = `$${Number(fuel.priceUsdGal).toFixed(2)}/gal`;
+        if (fuel.wowChangePct != null) {
+          const up = fuel.wowChangePct >= 0;
+          document.getElementById('m-fuel-sub').innerHTML = `<span style="color:${up?'var(--red)':'var(--green)'};font-weight:700">${up?'▲':'▼'} ${up?'+':''}${fuel.wowChangePct.toFixed(1)}% WoW</span> · EIA verified`;
+        }
+      }
     }
     renderDashboard();
     renderSummary();
@@ -556,6 +618,7 @@ async function loadReports() {
     renderIndex();
     renderLeaderboard();
     renderSpotlight();
+    renderChanges();
   } catch(err) {
     showError(err.message);
   }
@@ -573,9 +636,10 @@ function showError(msg) {
 // ============================================================
 function renderDashboard() {
   const seen = new Set();
-  const latest = allReports.filter(r => { if(seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
+  let latest = allReports.filter(r => { if(seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
+  latest = latest.filter(r => matchesQuery(r, dashQuery));
   const grid = document.getElementById('dash-grid');
-  if (!latest.length) { grid.innerHTML = '<p style="font-size:13px;color:var(--text3)">No reports yet.</p>'; return; }
+  if (!latest.length) { grid.innerHTML = `<p style="font-size:13px;color:var(--text3)">${dashQuery ? 'No locations match "' + esc(dashQuery) + '".' : 'No reports yet.'}</p>`; return; }
   const top = currentScores()[0];
   grid.innerHTML = latest.map(r => {
     const es = (r.report_json||{}).executive_summary || {};
@@ -647,8 +711,9 @@ function renderSummary() {
       <h3>UK / EMEA — ${uk.length} locations</h3>
       <div class="summary-section-body">${uk.map(renderLocSummary).join('')}</div>
     </div>
-    <div style="margin-top:1rem;display:flex;gap:8px">
-      <button class="btn" onclick="window.print()">Print summary</button>
+    <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn" onclick="downloadSummaryCSV()" style="background:var(--us);color:#fff">Download CSV</button>
     </div>`;
 }
 
@@ -662,6 +727,7 @@ function renderArchive(filter) {
   else if (filter === 'UK') reports = allReports.filter(r => r.country === 'UK');
   else if (filter === 'TECHNICair') reports = allReports.filter(r => r.facility_type?.includes('TECHNICair'));
   else if (filter === 'FBO') reports = allReports.filter(r => r.facility_type?.includes('FBO') || r.facility_type?.includes('Line'));
+  reports = reports.filter(r => matchesQuery(r, archiveQuery));
 
   // Group by week (report_date)
   const weeks = {};
@@ -805,6 +871,102 @@ function renderReportHTML(r) {
     ${gapHtml}
     ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title ${cc}">Sources cited</div>${srcHtml}</div>` : ''}
   </div>`;
+}
+
+// ============================================================
+// WHAT CHANGED THIS WEEK — diff latest vs prior report per location.
+// The same logic runs server-side in scripts/send_summary.js for the
+// email newsletter — keep the two in sync if the heuristics change.
+// ============================================================
+function competitorNames(v) {
+  return String(v || '').split(/[,;]/)
+    .map(s => s.replace(/\[UNVERIFIED\]/ig, '').replace(/\(.*?\)/g, '').trim().toLowerCase())
+    .filter(s => s.length > 2 && !['none', 'n/a', 'various', 'not publicly available'].includes(s));
+}
+function computeWeeklyChanges() {
+  const byLoc = {};
+  allReports.forEach(r => { (byLoc[r.location_code] = byLoc[r.location_code] || []).push(r); });
+  const changes = [];
+  let hasPrior = false;
+  Object.values(byLoc).forEach(arr => {
+    const cur = arr[0];
+    const curDate = cur.report_date || (cur.created_at || '').slice(0, 10);
+    const prev = arr.find(r => (r.report_date || (r.created_at || '').slice(0, 10)) !== curDate);
+    if (!prev) return;
+    hasPrior = true;
+    const ck = (cur.report_json || {}).kpi_table || [];
+    const pk = (prev.report_json || {}).kpi_table || [];
+    const items = [];
+    [['Signature Position', positionScore], ['Positional Ranking', rankScore], ['Market Share (Signature vs Others)', shareScore]].forEach(([f, scorer]) => {
+      const a = kpiVal(pk, f), b = kpiVal(ck, f);
+      if (a && b && !isNA(a) && !isNA(b) && a.trim().toLowerCase() !== b.trim().toLowerCase()) {
+        const sa = scorer(a), sb = scorer(b);
+        const dir = sa == null || sb == null || sa === sb ? 'neutral' : sb > sa ? 'positive' : 'negative';
+        items.push({ label: f.replace(' (Signature vs Others)', ''), from: a, to: b, dir });
+      }
+    });
+    const prevNames = new Set([...competitorNames(kpiVal(pk, 'Named FBO Competitors')), ...competitorNames(kpiVal(pk, 'MRO Operators at Airport'))]);
+    const curNames = [...new Set([...competitorNames(kpiVal(ck, 'Named FBO Competitors')), ...competitorNames(kpiVal(ck, 'MRO Operators at Airport'))])];
+    const added = curNames.filter(n => !prevNames.has(n) && !n.includes('signature') && !n.includes('technicair') && !n.includes('landmark'));
+    if (prevNames.size && added.length) items.push({ label: 'New competitor mentioned', to: added.join(', '), dir: 'negative' });
+    const sc = successScore(cur), sp = successScore(prev);
+    const delta = sc != null && sp != null ? sc - sp : null;
+    if (items.length || (delta != null && Math.abs(delta) >= 5)) {
+      changes.push({ code: cur.location_code, name: cur.location_name, country: cur.country, items, delta });
+    }
+  });
+  changes.sort((a, b) => Math.abs(b.delta || 0) - Math.abs(a.delta || 0));
+  return { changes, hasPrior };
+}
+
+function renderChanges() {
+  const el = document.getElementById('changes-panel');
+  if (!allReports.length) { el.innerHTML = ''; return; }
+  const { changes, hasPrior } = computeWeeklyChanges();
+  let body;
+  if (!hasPrior) {
+    body = '<p style="font-size:13px;color:var(--text2)">First tracked week — changes will appear here once a second week of reports exists.</p>';
+  } else if (!changes.length) {
+    body = '<p style="font-size:13px;color:var(--text2)">No material changes across the portfolio this week — positions, rankings, and competitor sets held steady.</p>';
+  } else {
+    body = changes.map(c => {
+      const cc = c.country === 'UK' ? 'uk' : 'us';
+      const itemsHtml = c.items.map(it => `<div class="chg-item"><span class="chg-arrow ${it.dir}">${it.dir === 'positive' ? '▲' : it.dir === 'negative' ? '▼' : '●'}</span><strong>${esc(it.label)}:</strong> ${it.from ? esc(it.from) + ' → ' : ''}${esc(it.to)}</div>`).join('')
+        || '<div class="chg-item"><span class="chg-arrow neutral">●</span>Composite score moved with no single driving KPI change.</div>';
+      const deltaHtml = c.delta != null && Math.abs(c.delta) >= 0.05
+        ? `<span class="chg-delta ${c.delta >= 0 ? 'up' : 'down'}">${c.delta >= 0 ? '▲ +' : '▼ '}${c.delta.toFixed(1)} score</span>` : '';
+      return `<div class="chg-row"><div class="chg-loc"><span class="country-dot ${cc}"></span>${esc(c.code)}</div><div class="chg-items">${itemsHtml}</div>${deltaHtml}</div>`;
+    }).join('');
+  }
+  el.innerHTML = `<div class="card"><div class="card-title">What changed this week</div>${body}</div>`;
+}
+
+// ============================================================
+// CSV EXPORT — latest snapshot per location
+// ============================================================
+function csvCell(v) {
+  const s = String(v == null ? '' : v);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadSummaryCSV() {
+  const seen = new Set();
+  const latest = allReports.filter(r => { if (seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
+  const scores = Object.fromEntries(currentScores().map(s => [s.code, s]));
+  const header = ['Code', 'Location', 'City', 'Country', 'Facility type', 'Success score', 'WoW score change', 'Signature position', 'Positional ranking', 'Market share', 'Report week'];
+  const rows = latest.map(r => {
+    const k = (r.report_json || {}).kpi_table || [];
+    const sc = scores[r.location_code] || {};
+    return [r.location_code, r.location_name, r.city, r.country, r.facility_type,
+      sc.score != null ? sc.score.toFixed(1) : '', sc.delta != null ? sc.delta.toFixed(1) : '',
+      kpiVal(k, 'Signature Position'), kpiVal(k, 'Positional Ranking'), kpiVal(k, 'Market Share (Signature vs Others)'),
+      r.week_label || r.report_date || ''];
+  });
+  const csv = [header, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `condor-weekly-summary-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 // ============================================================

@@ -6,6 +6,7 @@
 
 import fetch from 'node-fetch';
 import { createClient } from '@supabase/supabase-js';
+import { fetchGroundTruth, groundTruthPromptBlock } from './ground_truth.js';
 
 const PERPLEXITY_KEY = process.env.PERPLEXITY_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -79,7 +80,7 @@ const LOCATIONS = [
 // ============================================================
 // Build the prompt for a single location
 // ============================================================
-function buildPrompt(loc) {
+function buildPrompt(loc, groundTruth) {
   const isUK = loc.country === 'UK';
   const regulator = isUK
     ? 'UK CAA approved organisations register (caa.co.uk)'
@@ -97,6 +98,7 @@ AUTHORITATIVE MRO REGISTRY: ${regulator}
 
 INTERNAL BASELINE DATA (update with fresh live web data where available):
 ${JSON.stringify(loc.baseline, null, 2)}
+${groundTruthPromptBlock(groundTruth)}
 
 YOUR TASK: Search the web right now and generate a current weekly market intelligence report for this location. Use live sources including FAA ATADS, BTS T-100, EIA fuel data, GAMA reports, AIN/Aviation Week news, and the ${regulator}.
 
@@ -238,6 +240,9 @@ async function run() {
   console.log(`AI Engine: Perplexity Sonar (live web search)`);
   console.log(`========================================\n`);
 
+  console.log('Fetching authenticated ground-truth feeds...');
+  const groundTruth = await fetchGroundTruth();
+
   const results = { success: [], failed: [] };
 
   for (let i = 0; i < LOCATIONS.length; i++) {
@@ -245,8 +250,9 @@ async function run() {
     console.log(`[${i + 1}/${LOCATIONS.length}] Generating: ${loc.name} (${loc.code})...`);
 
     try {
-      const prompt = buildPrompt(loc);
+      const prompt = buildPrompt(loc, groundTruth);
       const report = await callPerplexity(prompt);
+      report.ground_truth = groundTruth;
 
       if (!DRY_RUN) {
         await saveReport(report);
@@ -266,7 +272,8 @@ async function run() {
       console.log(`  ↻ Retrying in 10 seconds...`);
       await sleep(10000);
       try {
-        const report = await callPerplexity(buildPrompt(loc));
+        const report = await callPerplexity(buildPrompt(loc, groundTruth));
+        report.ground_truth = groundTruth;
         if (!DRY_RUN) { await saveReport(report); console.log(`  ✓ Retry succeeded — saved to database`); }
         results.success.push(loc.code);
       } catch (err2) {
