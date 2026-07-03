@@ -23,6 +23,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 // All 22 locations with baseline data from MRO Location Matrix
 // ============================================================
 const LOCATIONS = [
+  // ---- Flagship locations — Signature's two highest-profile fields ----
+  // Baselines verified against LAWA/iflyvny.com, Port Authority NY&NJ traffic
+  // reports, signatureaviation.com and AIN (July 2026 pass)
+  { code: 'VNY', name: 'Van Nuys Airport', city: 'Los Angeles, CA', type: 'Signature Flagship FBO/MRO', country: 'US', flagship: true,
+    baseline: { competitorCount: 4, airportTier: 1, marketSize: 'GA/Business (no scheduled pax)', annualOps: '230,000+ (LAWA)', fuelFlowage: 'Very High', mroOperators: 'Signature (East + West terminals), Clay Lacy Aviation', facilitySqFt: '250,000 (campus build-out)', maintenanceCategory: 'Hybrid', signaturePosition: 'Airport Leader — only operator with two full-service terminals', namedCompetitors: 'Clay Lacy Aviation, Castle & Cooke Aviation, Jet Aviation, The Park VNY', marketShare: 'Leading (2 of 6 FBO terminals)', positionalRank: '#1 of 5 operators' }},
+  { code: 'TEB', name: 'Teterboro Airport', city: 'Teterboro, NJ', type: 'Signature Flagship FBO/MRO', country: 'US', flagship: true,
+    baseline: { competitorCount: 2, airportTier: 1, marketSize: 'GA/Business (busiest bizav field in NY metro)', annualOps: '177,466 (PANYNJ, Jul 2023–Jul 2024)', fuelFlowage: 'Very High', mroOperators: 'Signature (East, West, South terminals), Jet Aviation', maintenanceCategory: 'Line/Hybrid', signaturePosition: 'Airport Leader — largest operator, 3 terminals after Meridian acquisition (Jan 2024)', namedCompetitors: 'Atlantic Aviation, Jet Aviation', marketShare: 'Dominant (3 of 5 FBO terminals)', positionalRank: '#1 of 3 operators' }},
   { code: 'BZN', name: "Bozeman Yellowstone Int'l", city: 'Bozeman, MT', type: 'TECHNICair Repair Station', country: 'US',
     baseline: { competitorCount: 4, airportTier: 2, marketSize: '2.68M pax/yr', annualOps: '117,304', fuelFlowage: 'High', mroOperators: "TECHNICair, Arlin's", facilitySqFt: '80,000+', maintenanceCategory: 'Hybrid', signaturePosition: 'Airport Leader', namedCompetitors: 'Jet Aviation, Yellowstone Jetcenter, Million Air', marketShare: '~25-30%', positionalRank: '#1 of 4' }},
   { code: 'FAT', name: "Fresno Yosemite Int'l", city: 'Fresno, CA', type: 'TECHNICair Repair Station', country: 'US',
@@ -94,11 +101,12 @@ ${JSON.stringify(loc.baseline, null, 2)}
 YOUR TASK: Search the web right now and generate a current weekly market intelligence report for this location. Use live sources including FAA ATADS, BTS T-100, EIA fuel data, GAMA reports, AIN/Aviation Week news, and the ${regulator}.
 
 DATA INTEGRITY RULES — NON-NEGOTIABLE:
-1. Every data point must cite its exact source URL or dataset name
-2. Never invent competitor names. Only list operators verified from ${regulator} or live web search. Mark others [UNVERIFIED]
-3. Never fabricate financial figures. If unknown write "Not publicly available"
+1. Every data point must cite its exact source URL (preferred) or authoritative dataset name — primary/official sources first: FAA, BTS, EIA, UK CAA, airport authority (LAWA, PANYNJ), operator press rooms. Blogs/charter-broker sites are NOT acceptable sources
+2. Never invent competitor names. Only list operators verified from ${regulator} or an official airport-authority FBO directory. Mark others [UNVERIFIED]
+3. Never fabricate financial figures. If a value cannot be verified against a named source, set "value" to "" (empty string) and add the field name to data_gaps — do NOT write "Not available" or "Unknown" as a value
 4. Market share estimates must be clearly labeled as estimates with rationale
 5. If using baseline data not verified this week, mark source as "Baseline data — needs verification"
+6. Prefer replacing any baseline estimate with a fresher figure from an authenticated source, and cite that source
 
 Respond ONLY with valid JSON — no markdown, no text outside the JSON:
 
