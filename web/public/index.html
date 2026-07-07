@@ -876,7 +876,7 @@ function renderReportHTML(r) {
     ${kpisShown.length ? `<div class="card"><div class="card-title ${cc}">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
     ${signals.length ? `<div class="card"><div class="card-title ${cc}">Market signals</div>${signalHtml}</div>` : ''}
     ${gapHtml}
-    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title ${cc}">Sources cited</div>${srcHtml}</div>` : ''}
+    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title">Sources cited</div>${srcHtml}</div>` : ''}
   </div>`;
 }
 
