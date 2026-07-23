@@ -4,169 +4,188 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Condor Market Intelligence</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23142544'/><path d='M20 60 L50 25 L80 60 L65 60 L65 80 L35 80 L35 60 Z' fill='%2313DCA2'/></svg>">
+<meta name="description" content="Weekly market intelligence for the Signature Aviation MRO portfolio — built for airport executives.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23142544'/><path d='M20 60 L50 25 L80 60 L65 60 L65 80 L35 80 L35 60 Z' fill='%2313DCA2'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 :root{
-  --bg:#f7f8fa;--surface:#fff;--surface2:#f1f3f6;--border:#e3e6eb;--border2:#cdd2da;
-  --text:#142544;--text2:#5b6478;--text3:#8b93a3;
+  --bg:#f6f7f9;--surface:#ffffff;--surface2:#f0f2f5;--border:#e2e5ea;--border2:#c9cfd8;
+  --text:#142544;--text2:#535d72;--text3:#8b93a3;
   --blue:#1a6db5;--blue-bg:#e8f0f9;--blue-text:#0d4a82;
   --green:#1a7a45;--green-bg:#e6f4ec;--green-text:#0f5530;
   --amber:#a05e0a;--amber-bg:#fdf0dc;--amber-text:#7a4708;
   --red:#b52020;--red-bg:#faeaea;--red-text:#821515;
-  /* Country color coding — US = navy, UK = green (full-panel fills) */
-  --us:#142544;--us2:#1c3a63;--us-bg:#eaecf1;--us-text:#142544;
-  --uk:#13DCA2;--uk2:#0f8a6c;--uk-bg:#e3fbf3;--uk-text:#0a6e51;
-  /* Darker panel-fill variants of the UK green — keeps brand color but raises
-     contrast for dark text on large color blocks (the pure --uk teal is too
-     light for body text to read clearly against) */
+  /* Country coding — US navy, UK teal (unchanged brand palette) */
+  --us:#142544;--us2:#1c3a63;--us-bg:#eaecf1;
+  --uk:#13DCA2;--uk2:#0f8a6c;--uk-bg:#e3fbf3;
   --uk-fill:#0a7a5c;--uk-fill2:#054a38;
-  /* Premium gold accents — flagship locations & performance highlights.
-     Chart series colors (#0FA97C teal / #BA8A28 gold / #C05C5C red) are
-     CVD-validated against the navy chart surface. */
+  /* Gold accents — flagships & highlights */
   --gold:#BA8A28;--gold2:#E8C15A;--gold-soft:rgba(232,193,90,.14);
-  --chart-up:#0FA97C;--chart-up-bright:#13DCA2;--chart-gold:#BA8A28;--chart-down:#C05C5C;--chart-down-bright:#ff7b7b;
-  --r:14px;--rs:8px
+  --chart-up:#0FA97C;--chart-up-bright:#13DCA2;--chart-down:#C05C5C;--chart-down-bright:#ff7b7b;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:4px;
+  --shadow:0 1px 2px rgba(20,37,68,.05),0 10px 32px -18px rgba(20,37,68,.22);
 }
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(180deg,#142544 0%,#1a3a5c 14%,#5b6478 38%,#dfe2e8 68%,var(--bg) 100%);background-attachment:fixed;color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);background-image:radial-gradient(circle at 18% 0%,rgba(19,220,162,.045),transparent 42%),radial-gradient(circle at 100% 25%,rgba(20,37,68,.05),transparent 48%);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
 .app{display:flex;min-height:100vh}
-.sidebar{width:264px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{flex:1;padding:2.5rem;max-width:1140px}
-.sidebar-header{padding:1.75rem 1.5rem;background:linear-gradient(160deg,#142544 0%,#1a3a5c 65%,#0f6e5c 135%)}
-.logo{font-size:17px;font-weight:800;color:#fff;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:baseline;gap:2px}
-.logo-accent{color:var(--uk)}
-.logo-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,.65);margin-top:5px;text-transform:uppercase;letter-spacing:.12em}
-.nav{padding:1rem 0;flex:1}
-.nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:.6rem 1.5rem .35rem}
-.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.5rem;cursor:pointer;font-size:12.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:all .12s;border-left:3px solid transparent}
-.nav-item svg{flex-shrink:0;opacity:.75}
+
+/* ---------- Sidebar ---------- */
+.sidebar{width:256px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-header{padding:1.9rem 1.5rem 1.5rem;background:linear-gradient(170deg,#0c1830 0%,var(--us) 60%,#12365c 100%);position:relative}
+.sidebar-header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--us) 0%,var(--uk2) 50%,var(--gold) 100%)}
+.logo{font-family:var(--serif);font-size:24px;font-weight:700;color:#fff;letter-spacing:.02em;line-height:1.1}
+.logo .logo-accent{color:var(--uk)}
+.logo-sub{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.62);margin-top:7px;text-transform:uppercase;letter-spacing:.2em}
+.ornament{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0 0;max-width:170px}
+.ornament span{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(232,193,90,.75))}
+.ornament span:last-child{background:linear-gradient(90deg,rgba(232,193,90,.75),transparent)}
+.ornament svg{fill:var(--gold2);flex-shrink:0}
+.nav{padding:1.1rem 0;flex:1}
+.nav-label{font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.18em;padding:.65rem 1.5rem .4rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.62rem 1.5rem;cursor:pointer;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .18s,color .18s;border-left:2px solid transparent}
+.nav-item svg{flex-shrink:0;opacity:.7}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:var(--us-bg);color:var(--us);font-weight:700;border-left-color:var(--uk)}
+.nav-item.active{background:var(--us-bg);color:var(--us);font-weight:700;border-left-color:var(--gold)}
 .nav-item.active svg{opacity:1}
 .sidebar-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
-.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--uk);margin-right:5px}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--uk);margin-right:6px}
+
+/* ---------- Main ---------- */
+.main{flex:1;padding:2.75rem 2.75rem 4rem;max-width:1180px}
 .panel{display:none}.panel.active{display:block}
-.page-title{font-size:30px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em;color:#fff}
-.page-sub{font-size:13.5px;color:rgba(255,255,255,.78);margin-bottom:1.75rem;max-width:640px}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.75rem}
-.metric{position:relative;overflow:hidden;background:linear-gradient(165deg,#ffffff 0%,#f8fafc 60%,#f1f4f8 100%);border:1px solid var(--border);border-radius:var(--r);padding:1.15rem 1.2rem;box-shadow:0 12px 28px rgba(20,37,68,.16),0 2px 6px rgba(20,37,68,.08),inset 0 1px 0 rgba(255,255,255,.9);transition:transform .18s ease,box-shadow .18s ease}
-.metric:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(20,37,68,.2),0 3px 8px rgba(20,37,68,.1),inset 0 1px 0 rgba(255,255,255,.9)}
-.metric::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--us) 0%,var(--uk2) 55%,var(--gold2) 100%)}
-.metric-label{font-size:10.5px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-.metric-value{font-size:26px;font-weight:800;color:var(--us);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-.metric-sub{font-size:11px;color:var(--text2);margin-top:3px}
-.card{background:linear-gradient(170deg,#ffffff 0%,#fbfcfe 70%,#f5f7fa 100%);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1.1rem;box-shadow:0 8px 22px rgba(20,37,68,.09),0 1px 3px rgba(20,37,68,.05),inset 0 1px 0 rgba(255,255,255,.85)}
-.card-title{font-size:14.5px;font-weight:700;margin-bottom:.85rem;color:var(--us);display:flex;align-items:center;gap:6px}
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.eyebrow{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.24em;margin-bottom:8px}
+.page-title{font-family:var(--serif);font-size:38px;font-weight:600;letter-spacing:.005em;color:var(--text);line-height:1.12;margin-bottom:8px}
+.page-sub{font-size:13.5px;color:var(--text2);margin-bottom:2rem;max-width:660px;line-height:1.7}
+
+/* ---------- Reveal transitions (IntersectionObserver, re-triggering) ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.is-visible{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* ---------- Metrics ---------- */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.75rem}
+.metric{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem;box-shadow:var(--shadow);transition:transform .2s ease,box-shadow .2s ease}
+.metric:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(20,37,68,.06),0 18px 40px -18px rgba(20,37,68,.28)}
+.metric::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--us) 0%,var(--uk2) 55%,var(--gold2) 100%)}
+.metric-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px}
+.metric-value{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--us);letter-spacing:0;font-variant-numeric:tabular-nums;line-height:1.1}
+.metric-sub{font-size:11px;color:var(--text2);margin-top:4px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--us);border-radius:var(--r);padding:1.5rem 1.6rem;margin-bottom:1.15rem;box-shadow:var(--shadow)}
+.card.gold-top{border-top-color:var(--gold)}
+.card-title{font-family:var(--serif);font-size:19px;font-weight:700;margin-bottom:.9rem;color:var(--us);display:flex;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .badge-blue{background:var(--blue-bg);color:var(--blue-text)}
 .badge-green{background:var(--green-bg);color:var(--green-text)}
 .badge-amber{background:var(--amber-bg);color:var(--amber-text)}
-.badge-gray{background:var(--surface2);color:var(--text2)}
 .badge-us{background:var(--us);color:#fff}
 .badge-uk{background:var(--uk);color:#06231a}
 .badge-on-us{background:rgba(255,255,255,.18);color:#fff}
 .badge-on-uk{background:rgba(255,255,255,.22);color:#fff}
+.badge-gold{background:linear-gradient(120deg,var(--gold),#d8b04a);color:#241a02}
+.badge-flag{background:linear-gradient(120deg,#0c8a63,var(--chart-up-bright));color:#04231a}
 .country-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0}
 .country-dot.us{background:var(--us)}
 .country-dot.uk{background:var(--uk)}
-.alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
-.alert-red{background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text);padding:.75rem 1rem;border-radius:var(--rs);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
+.alert-blue{background:var(--blue-bg);border:1px solid #a8c8ee;color:var(--blue-text);padding:.75rem 1rem;border-radius:var(--r);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
+.alert-red{background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text);padding:.75rem 1rem;border-radius:var(--r);font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:1rem}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2);white-space:nowrap}
-.tbl td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:7px 10px;border-bottom:1px solid var(--border2);text-align:left;white-space:nowrap}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:var(--surface2)}
+.tbl-scroll{overflow-x:auto}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Archive folder styles */
-.week-folder{border:1px solid var(--border);border-radius:var(--r);margin-bottom:.75rem;overflow:hidden;background:var(--surface)}
-.week-folder-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;cursor:pointer;transition:background .12s;user-select:none}
+/* ---------- Archive ---------- */
+.week-folder{border:1px solid var(--border);border-radius:var(--r);margin-bottom:.75rem;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.week-folder-header{display:flex;align-items:center;justify-content:space-between;padding:.95rem 1.3rem;cursor:pointer;transition:background .15s;user-select:none}
 .week-folder-header:hover{background:var(--surface2)}
-.week-folder-header.open{background:var(--blue-bg);border-bottom:1px solid var(--border)}
-.week-folder-title{font-size:14px;font-weight:700;color:var(--us);display:flex;align-items:center;gap:8px}
-.week-folder-meta{font-size:12px;color:var(--text3)}
+.week-folder-header.open{background:var(--us-bg);border-bottom:1px solid var(--border)}
+.week-folder-title{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--us)}
+.week-folder-meta{font-size:11.5px;color:var(--text3)}
 .week-folder-body{display:none;padding:1rem 1.25rem}
 .week-folder-body.open{display:block}
-.week-summary{background:var(--surface2);border-radius:var(--rs);padding:1rem;margin-bottom:1rem}
-.week-summary h4{font-size:11px;font-weight:700;color:var(--us);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.week-summary{background:var(--surface2);border-left:2px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.2rem;margin-bottom:1rem}
+.week-summary h4{font-size:10px;font-weight:700;color:var(--us);text-transform:uppercase;letter-spacing:.14em;margin-bottom:.45rem}
 .week-summary p{font-size:13px;color:var(--text);line-height:1.7}
-.loc-item{display:flex;align-items:center;gap:10px;padding:.65rem .9rem;border-radius:var(--rs);margin-bottom:.4rem;cursor:pointer;transition:filter .12s;color:#fff}
-.loc-item:hover{filter:brightness(1.08)}
+.loc-item{display:flex;align-items:center;gap:10px;padding:.65rem .95rem;border-radius:var(--r);margin-bottom:.4rem;cursor:pointer;transition:filter .15s;color:#fff}
+.loc-item:hover{filter:brightness(1.09)}
 .loc-item.us{background:linear-gradient(120deg,var(--us),var(--us2))}
-.loc-item.uk{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2));color:#fff}
+.loc-item.uk{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2))}
 .loc-item.active{outline:2px solid rgba(255,255,255,.5)}
 .loc-name{font-size:13px;font-weight:700;flex:1}
-.loc-code{font-size:11px;opacity:.8;font-family:monospace}
+.loc-code{font-size:11px;opacity:.8;font-family:ui-monospace,monospace}
 .loc-type{font-size:11px;opacity:.85}
 
-/* Report view */
+/* ---------- Report view ---------- */
 .report-view{margin-top:1.5rem}
-.report-header{margin-bottom:1.25rem;padding:1rem 1.25rem;border-radius:var(--r);color:#fff}
+.report-header{margin-bottom:1.25rem;padding:1.15rem 1.35rem;border-radius:var(--r);color:#fff}
 .report-header.us{background:linear-gradient(120deg,var(--us),var(--us2))}
-.report-header.uk{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2));color:#fff}
-.report-title{font-size:18px;font-weight:800;margin-bottom:3px}
+.report-header.uk{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2))}
+.report-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:3px}
 .report-meta{font-size:12px;opacity:.85}
-.section-title{position:relative;display:inline-block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;margin-top:1.25rem}
-.card-title{position:relative}
-.section-title.us::before,.card-title.us::before{content:"";position:absolute;left:-16px;top:50%;width:140px;height:64px;transform:translateY(-50%);background:radial-gradient(circle,rgba(26,109,181,.30) 0%,rgba(26,109,181,0) 72%);z-index:-1;pointer-events:none}
-.section-title.uk::before,.card-title.uk::before{content:"";position:absolute;left:-16px;top:50%;width:140px;height:64px;transform:translateY(-50%);background:radial-gradient(circle,rgba(15,138,108,.32) 0%,rgba(15,138,108,0) 72%);z-index:-1;pointer-events:none}
+.section-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.16em;margin-bottom:.6rem;margin-top:1.25rem;display:flex;align-items:center;gap:10px}
+.section-title::after{content:"";flex:1;height:1px;background:var(--border);max-width:120px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
-.kpi-item{background:var(--surface2);border-radius:var(--rs);padding:.75rem}
-.kpi-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.kpi-item{background:var(--surface2);border-left:2px solid var(--border2);border-radius:0 var(--r) var(--r) 0;padding:.75rem .9rem}
+.kpi-label{font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
 .kpi-value{font-size:13px;color:var(--text);line-height:1.5}
-.kpi-source{font-size:10px;color:var(--text3);margin-top:2px}
+.kpi-source{font-size:10px;color:var(--text3);margin-top:2px;font-style:italic}
 .signal-item{padding:.6rem 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .signal-item:last-child{border-bottom:none}
-.signal-dir{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;flex-shrink:0;margin-top:2px}
+.signal-dir{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:2px;flex-shrink:0;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
 .dir-positive{background:var(--green-bg);color:var(--green-text)}
 .dir-negative{background:var(--red-bg);color:var(--red-text)}
 .dir-neutral{background:var(--surface2);color:var(--text2)}
-.signal-text{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px}
+.signal-text{font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px}
 .signal-detail{font-size:12px;color:var(--text2)}
-.source-chip{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);margin:2px}
-.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#fff;cursor:pointer;margin-bottom:1rem;background:none;border:none;padding:0}
-.back-btn:hover{text-decoration:underline}
+.source-chip{display:inline-block;font-size:10px;padding:2px 8px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);margin:2px}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--us);cursor:pointer;margin-bottom:1rem;background:none;border:none;padding:0}
+.back-btn:hover{color:var(--uk2)}
 
-/* Dashboard grid */
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.dash-card{position:relative;overflow:hidden;border-radius:var(--r);padding:1.15rem 1.2rem;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;color:#fff;box-shadow:0 4px 14px rgba(20,37,68,.18),inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.07)}
-.dash-card::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.09) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
-.dash-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,37,68,.32),inset 0 1px 0 rgba(255,255,255,.1)}
+/* ---------- Dashboard grid ---------- */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.dash-card{position:relative;overflow:hidden;border-radius:var(--r);padding:1.15rem 1.25rem;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;color:#fff;box-shadow:0 4px 14px rgba(20,37,68,.16);border:1px solid rgba(255,255,255,.07)}
+.dash-card::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.08) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.dash-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px -8px rgba(20,37,68,.4)}
 .dash-card.us{background:linear-gradient(140deg,#0e1c36 0%,var(--us) 45%,var(--us2) 100%)}
-.dash-card.uk{background:linear-gradient(140deg,#04352a 0%,var(--uk-fill2) 45%,var(--uk-fill) 100%);color:#fff}
-.dash-card.flagship{border:1px solid rgba(232,193,90,.55);box-shadow:0 4px 18px rgba(186,138,40,.28),0 4px 14px rgba(20,37,68,.18),inset 0 1px 0 rgba(232,193,90,.25)}
-.dash-card.flagship::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
-.dash-card-title{font-size:13.5px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dash-card.uk{background:linear-gradient(140deg,#04352a 0%,var(--uk-fill2) 45%,var(--uk-fill) 100%)}
+.dash-card.flagship{border:1px solid rgba(232,193,90,.55)}
+.dash-card.flagship::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));z-index:1}
+.dash-card-title{font-family:var(--serif);font-size:17px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .dash-card-meta{font-size:11px;opacity:.85;margin-bottom:.6rem}
-.dash-card-preview{font-size:12px;opacity:.92;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.badge-gold{background:linear-gradient(120deg,var(--gold),#d8b04a);color:#241a02;box-shadow:0 1px 4px rgba(186,138,40,.4)}
-.badge-flag{background:linear-gradient(120deg,#0c8a63,var(--chart-up-bright));color:#04231a;box-shadow:0 1px 4px rgba(15,169,124,.4)}
+.dash-card-preview{font-size:12px;opacity:.92;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* Flagship spotlight — premium research cards for VNY / TEB */
-.spotlight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:1.75rem}
-.spotlight{position:relative;overflow:hidden;border-radius:var(--r);padding:1.35rem 1.4rem;color:#fff;background:linear-gradient(150deg,#0c1830 0%,#142544 48%,#1d3357 100%);border:1px solid rgba(232,193,90,.45);box-shadow:0 14px 34px rgba(10,20,40,.4),inset 0 1px 0 rgba(232,193,90,.22)}
-.spotlight::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold) 0%,var(--gold2) 50%,var(--gold) 100%)}
+/* ---------- Flagship spotlight ---------- */
+.spotlight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-bottom:1.75rem}
+.spotlight{position:relative;overflow:hidden;border-radius:var(--r);padding:1.4rem 1.5rem;color:#fff;background:linear-gradient(150deg,#0c1830 0%,var(--us) 48%,#1d3357 100%);border:1px solid rgba(232,193,90,.45);box-shadow:0 14px 34px -8px rgba(10,20,40,.5)}
+.spotlight::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold) 0%,var(--gold2) 50%,var(--gold) 100%)}
 .spotlight::after{content:"";position:absolute;inset:0;background:radial-gradient(110% 80% at 100% 0%,rgba(232,193,90,.10) 0%,rgba(232,193,90,0) 55%);pointer-events:none}
-.spotlight h3{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:2px;letter-spacing:-.01em}
-.spotlight .spot-sub{font-size:11px;color:var(--gold2);font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.8rem}
+.spotlight h3{font-family:var(--serif);font-size:21px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:2px;flex-wrap:wrap}
+.spotlight .spot-sub{font-size:10px;color:var(--gold2);font-weight:700;text-transform:uppercase;letter-spacing:.18em;margin-bottom:.8rem}
 .spotlight p{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.88);margin-bottom:.65rem}
 .spot-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:.8rem 0}
-.spot-fact{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--rs);padding:.6rem .7rem}
-.spot-fact .sf-label{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.spot-fact{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:.6rem .75rem}
+.spot-fact .sf-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
 .spot-fact .sf-value{font-size:13px;font-weight:700;color:#fff}
 .spot-fact .sf-src{font-size:9.5px;color:rgba(255,255,255,.45);margin-top:2px}
 .spot-links{font-size:10.5px;color:rgba(255,255,255,.55)}
 .spot-links a{color:var(--gold2);text-decoration:none}
 .spot-links a:hover{text-decoration:underline}
 
-/* Performance index — stock-style chart */
-.tape{position:relative;overflow:hidden;background:linear-gradient(150deg,#0c1830 0%,#142544 55%,#16294b 100%);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:1.4rem 1.5rem 1.1rem;color:#fff;margin-bottom:1rem;box-shadow:0 16px 40px rgba(10,20,40,.45),inset 0 1px 0 rgba(255,255,255,.07)}
+/* ---------- Performance index ---------- */
+.tape{position:relative;overflow:hidden;background:linear-gradient(150deg,#0c1830 0%,var(--us) 55%,#16294b 100%);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:1.4rem 1.5rem 1.1rem;color:#fff;margin-bottom:1rem;box-shadow:0 16px 40px -10px rgba(10,20,40,.5)}
 .tape-ticker{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:.35rem}
-.tape-symbol{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-.tape-value{font-size:38px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tape-symbol{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.tape-value{font-family:var(--serif);font-size:44px;font-weight:700;letter-spacing:0;font-variant-numeric:tabular-nums;line-height:1}
 .tape-delta{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
 .tape-delta.up{color:var(--chart-up-bright)}
 .tape-delta.down{color:var(--chart-down-bright)}
@@ -174,7 +193,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .tape-range strong{color:rgba(255,255,255,.85);font-weight:700}
 .chart-wrap{position:relative}
 .chart-wrap svg{display:block;width:100%;height:auto}
-.chart-tip{position:absolute;pointer-events:none;background:rgba(8,16,32,.94);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:.5rem .7rem;font-size:11px;color:#fff;display:none;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.4);white-space:nowrap}
+.chart-tip{position:absolute;pointer-events:none;background:rgba(8,16,32,.94);border:1px solid rgba(255,255,255,.16);border-radius:var(--r);padding:.5rem .7rem;font-size:11px;color:#fff;display:none;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.4);white-space:nowrap}
 .chart-tip .tip-date{font-weight:700;margin-bottom:2px;color:rgba(255,255,255,.75)}
 .chart-tip .tip-row{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
 .chart-tip .tip-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
@@ -182,18 +201,17 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .chart-legend .lg-item{display:flex;align-items:center;gap:6px}
 .chart-legend .lg-swatch{width:14px;height:3px;border-radius:2px}
 .idx-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
-.idx-select{padding:6px 12px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+.idx-select{padding:6px 12px;border-radius:2px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
 .ldr-score{font-weight:800;font-variant-numeric:tabular-nums;color:var(--us)}
 .ldr-delta{font-weight:700;font-variant-numeric:tabular-nums;font-size:11.5px}
 .ldr-delta.up{color:var(--green)}
 .ldr-delta.down{color:var(--red)}
 .ldr-delta.flat{color:var(--text3)}
-.tbl-scroll{overflow-x:auto}
 
-/* What changed this week */
+/* ---------- Changes ---------- */
 .chg-row{display:flex;gap:12px;align-items:flex-start;padding:.65rem 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .chg-row:last-child{border-bottom:none}
-.chg-loc{font-size:12px;font-weight:700;color:var(--text);min-width:52px;font-family:monospace;padding-top:2px}
+.chg-loc{font-size:12px;font-weight:700;color:var(--text);min-width:52px;font-family:ui-monospace,monospace;padding-top:2px}
 .chg-items{flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px}
 .chg-item{font-size:12.5px;color:var(--text2);line-height:1.5}
 .chg-item strong{color:var(--text)}
@@ -201,134 +219,199 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .chg-arrow.positive{color:var(--green)}
 .chg-arrow.negative{color:var(--red)}
 .chg-arrow.neutral{color:var(--text3)}
-.chg-delta{font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;padding:2px 9px;border-radius:999px;align-self:flex-start;margin-top:2px}
+.chg-delta{font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;padding:2px 9px;border-radius:2px;align-self:flex-start;margin-top:2px}
 .chg-delta.up{background:var(--green-bg);color:var(--green-text)}
 .chg-delta.down{background:var(--red-bg);color:var(--red-text)}
 
-/* Search box */
-.search-input{width:100%;max-width:320px;padding:8px 14px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:12.5px;font-family:inherit;outline:none;transition:border-color .12s,box-shadow .12s}
-.search-input:focus{border-color:var(--uk2);box-shadow:0 0 0 3px rgba(15,138,108,.14)}
+/* ---------- Controls ---------- */
+.search-input{width:100%;max-width:320px;padding:8px 12px;border-radius:2px;border:none;border-bottom:1.5px solid var(--border2);background:var(--surface);color:var(--text);font-size:12.5px;font-family:inherit;outline:none;transition:border-color .15s}
+.search-input:focus{border-bottom-color:var(--gold)}
 .search-input::placeholder{color:var(--text3)}
-
-/* Summary page */
-.summary-hero{background:linear-gradient(180deg,#142544 0%,#1a3a5c 55%,#0d4a3c 100%);border-radius:var(--r);padding:1.75rem;color:#fff;margin-bottom:1.5rem}
-.summary-hero h2{font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-.01em}
-.summary-hero p{font-size:13px;opacity:.85;line-height:1.6}
-.summary-section{margin-bottom:1.5rem;border-radius:var(--r);overflow:hidden}
-.summary-section h3{font-size:13px;font-weight:700;color:#fff;margin:0;padding:.75rem 1.1rem;text-transform:uppercase;letter-spacing:.05em}
-.summary-section.us h3{background:linear-gradient(120deg,var(--us),var(--us2))}
-.summary-section.uk h3{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2));color:#fff}
-.summary-section-body{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);padding:.25rem 1.1rem}
-.summary-row{display:flex;gap:12px;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--border)}
-.summary-row:last-child{border-bottom:none}
-.summary-loc{font-size:12px;font-weight:700;color:var(--text);min-width:80px;font-family:monospace}
-.summary-text{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
-
 .filter-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
-.filter-btn{padding:6px 14px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s}
+.filter-btn{padding:6px 14px;border-radius:2px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s}
 .filter-btn:hover{background:var(--surface2)}
 .filter-btn.active{background:var(--us);color:#fff;border-color:var(--us)}
-.filter-btn[data-cc="us"].active{background:var(--us);border-color:var(--us)}
 .filter-btn[data-cc="uk"].active{background:var(--uk);border-color:var(--uk);color:#06231a}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;border:none;background:var(--uk);color:#06231a;font-size:13px;font-weight:700;cursor:pointer;transition:all .12s}
-.btn:hover{filter:brightness(1.08)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:2px;border:none;background:linear-gradient(180deg,var(--uk),#0fbe8b);color:#06231a;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:filter .15s;box-shadow:0 10px 24px -12px rgba(15,169,124,.6)}
+.btn:hover{filter:brightness(1.06)}
+.btn.btn-navy{background:linear-gradient(180deg,var(--us2),var(--us));color:#fff;box-shadow:0 10px 24px -12px rgba(20,37,68,.6)}
+
+/* ---------- Summary ---------- */
+.summary-hero{background:linear-gradient(160deg,#0c1830 0%,var(--us) 55%,#0d4a3c 100%);border-radius:var(--r);padding:1.9rem;color:#fff;margin-bottom:1.5rem;box-shadow:0 14px 34px -10px rgba(10,20,40,.5)}
+.summary-hero h2{font-family:var(--serif);font-size:28px;font-weight:700;margin-bottom:4px}
+.summary-hero p{font-size:13px;opacity:.85;line-height:1.6;max-width:640px}
+.summary-section{margin-bottom:1.5rem;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.summary-section h3{font-size:12px;font-weight:700;color:#fff;margin:0;padding:.8rem 1.2rem;text-transform:uppercase;letter-spacing:.12em}
+.summary-section.us h3{background:linear-gradient(120deg,var(--us),var(--us2))}
+.summary-section.uk h3{background:linear-gradient(120deg,var(--uk-fill),var(--uk-fill2))}
+.summary-section-body{background:var(--surface);border:1px solid var(--border);border-top:none;padding:.25rem 1.2rem}
+.summary-row{display:flex;gap:12px;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--border)}
+.summary-row:last-child{border-bottom:none}
+.summary-loc{font-size:12px;font-weight:700;color:var(--text);min-width:80px;font-family:ui-monospace,monospace}
+.summary-text{font-size:12px;color:var(--text2);line-height:1.55;flex:1}
+
+/* ---------- Chat ---------- */
+.chat-shell{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;height:calc(100vh - 220px);min-height:480px;overflow:hidden}
+.chat-thread{flex:1;overflow-y:auto;padding:1.5rem 1.6rem;display:flex;flex-direction:column;gap:14px}
+.chat-empty{margin:auto;text-align:center;max-width:520px;padding:2rem 1rem}
+.chat-empty .ornament{margin:18px auto}
+.chat-empty h3{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--us);margin-bottom:6px}
+.chat-empty p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:1.2rem}
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chat-chip{padding:8px 14px;border:1px solid var(--border2);border-radius:2px;background:var(--surface);font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit;text-align:left}
+.chat-chip:hover{border-color:var(--gold);color:var(--us);background:var(--gold-soft)}
+.msg{max-width:78%;padding:.8rem 1.05rem;border-radius:var(--r);font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-wrap:break-word}
+.msg.user{align-self:flex-end;background:linear-gradient(140deg,var(--us),var(--us2));color:#fff;border-bottom-right-radius:0}
+.msg.assistant{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:0}
+.msg.assistant strong{color:var(--us)}
+.msg-role{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;opacity:.6}
+.msg.error{align-self:flex-start;background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text)}
+.chat-typing{align-self:flex-start;display:flex;gap:5px;padding:.9rem 1.1rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);border-bottom-left-radius:0}
+.chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:pulse 1.2s infinite ease-in-out}
+.chat-typing span:nth-child(2){animation-delay:.15s}
+.chat-typing span:nth-child(3){animation-delay:.3s}
+@keyframes pulse{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.chat-input-bar{border-top:1px solid var(--border);padding:1rem 1.25rem;display:flex;gap:10px;align-items:flex-end;background:var(--surface)}
+.chat-input{flex:1;resize:none;border:none;border-bottom:1.5px solid var(--border2);background:transparent;font-family:inherit;font-size:13.5px;color:var(--text);line-height:1.5;padding:8px 2px 10px;outline:none;max-height:140px;transition:border-color .15s}
+.chat-input:focus{border-bottom-color:var(--gold)}
+.chat-send{flex-shrink:0;padding:10px 22px;border-radius:2px;border:none;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#241a02;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 24px -12px rgba(186,138,40,.6);transition:filter .15s;font-family:inherit}
+.chat-send:hover:not(:disabled){filter:brightness(1.05)}
+.chat-send:disabled{background:var(--border2);color:var(--text3);box-shadow:none;cursor:not-allowed}
+.chat-foot{font-size:10.5px;color:var(--text3);padding:0 1.25rem .8rem;background:var(--surface)}
+.chat-clear{background:none;border:none;color:var(--text3);font-size:10.5px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0}
+.chat-clear:hover{color:var(--red)}
+
+/* ---------- Responsive ---------- */
 @media(max-width:700px){
   .app{flex-direction:column}
   .sidebar{width:100%;height:auto;position:static}
   .sidebar-header,.sidebar-foot,.nav-label{display:none}
   .nav{display:flex;flex-direction:row;padding:.5rem;gap:4px;overflow-x:auto;flex-wrap:nowrap}
-  .nav-item{white-space:nowrap;padding:.4rem .75rem;border-radius:var(--rs);border-left:none}
-  .nav-item.active{border-left:none;box-shadow:inset 0 -2px 0 var(--uk)}
-  .main{padding:1rem;max-width:100%}
+  .nav-item{white-space:nowrap;padding:.45rem .8rem;border-radius:var(--r);border-left:none}
+  .nav-item.active{border-left:none;box-shadow:inset 0 -2px 0 var(--gold)}
+  .main{padding:1.25rem 1rem 3rem;max-width:100%}
   .kpi-grid{grid-template-columns:1fr}
-  .page-title{font-size:24px}
+  .page-title{font-size:28px}
   .metrics{grid-template-columns:repeat(2,1fr)}
-  .metric-value{font-size:21px}
+  .metric-value{font-size:23px}
   .tape{padding:1rem 1rem .8rem}
-  .tape-value{font-size:28px}
+  .tape-value{font-size:32px}
   .tape-delta{font-size:13px}
   .tape-range{gap:10px;font-size:10.5px}
   .spotlight-grid{grid-template-columns:1fr}
   .spot-facts{grid-template-columns:1fr 1fr}
-  .idx-select{max-width:100%}
-  .search-input{max-width:100%}
+  .idx-select,.search-input{max-width:100%}
   .dash-grid{grid-template-columns:1fr}
   .summary-loc{min-width:56px}
   .chg-loc{min-width:44px}
+  .chat-shell{height:calc(100vh - 190px)}
+  .msg{max-width:92%}
 }
 @media(max-width:420px){
   .spot-facts{grid-template-columns:1fr}
   .metrics{grid-template-columns:1fr 1fr;gap:8px}
 }
-@media print{.sidebar,.filter-bar,.btn,.back-btn{display:none!important}.main{padding:.5rem}}
+@media print{.sidebar,.filter-bar,.btn,.back-btn,.chat-input-bar{display:none!important}.main{padding:.5rem}}
 </style>
 </head>
 <body>
 <div class="app">
   <nav class="sidebar">
     <div class="sidebar-header">
-      <div class="logo">Condor<span class="logo-accent">.</span>Intelligence</div>
-      <div class="logo-sub">Signature Aviation MRO Portfolio</div>
+      <div class="logo">Condor<span class="logo-accent">.</span></div>
+      <div class="logo-sub">Market Intelligence</div>
+      <div class="ornament"><span></span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L8.6 5.4 14 7 8.6 8.6 7 14 5.4 8.6 0 7 5.4 5.4Z"/></svg><span></span></div>
     </div>
     <div class="nav">
-      <div class="nav-label">Reports</div>
+      <div class="nav-label">Intelligence</div>
       <button class="nav-item active" onclick="nav('dashboard')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="nav('chat')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>
       <button class="nav-item" onclick="nav('changes')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Changes</button>
       <button class="nav-item" onclick="nav('index')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>Performance index</button>
       <button class="nav-item" onclick="nav('summary')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2h6a1 1 0 0 1 1 1v2H8V3a1 1 0 0 1 1-1z"/><rect x="5" y="5" width="14" height="16" rx="1"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/></svg>Weekly summary</button>
       <button class="nav-item" onclick="nav('archive')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l2-3h14l2 3"/><rect x="3" y="7" width="18" height="13" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Report archive</button>
-      <div class="nav-label" style="margin-top:.5rem">Info</div>
+      <div class="nav-label" style="margin-top:.5rem">Reference</div>
       <button class="nav-item" onclick="nav('sources')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>Data sources</button>
     </div>
-    <div class="sidebar-foot"><span class="dot"></span><span id="conn-status">Connecting...</span></div>
+    <div class="sidebar-foot"><span class="dot"></span><span id="conn-status">Connecting…</span></div>
   </nav>
 
   <main class="main">
 
     <!-- DASHBOARD -->
     <div id="panel-dashboard" class="panel active">
-      <div class="page-title">Dashboard</div>
+      <div class="eyebrow">Executive briefing</div>
+      <div class="page-title">Portfolio dashboard</div>
       <div class="page-sub" id="dash-date"></div>
-      <div id="load-alert" class="alert-blue"><span class="spinner"></span> Loading latest reports...</div>
+      <div id="load-alert" class="alert-blue"><span class="spinner"></span> Loading latest reports…</div>
       <div id="err-alert" class="alert-red" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg> <span id="err-msg"></span></div>
-      <div class="metrics">
+      <div class="metrics reveal">
         <div class="metric"><div class="metric-label">Locations tracked</div><div class="metric-value">24</div><div class="metric-sub">US + UK/EMEA · incl. VNY &amp; TEB</div></div>
         <div class="metric"><div class="metric-label">Reports in archive</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">All time</div></div>
-        <div class="metric"><div class="metric-label">Last generated</div><div class="metric-value" id="m-last" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub" id="m-last-loc">—</div></div>
-        <div class="metric"><div class="metric-label">Next auto-run</div><div class="metric-value" id="m-next" style="font-size:14px;padding-top:4px">—</div><div class="metric-sub">Monday 6 AM ET</div></div>
-        <div class="metric" id="m-fuel-tile" style="display:none"><div class="metric-label">Jet-A spot — Gulf Coast</div><div class="metric-value" id="m-fuel">—</div><div class="metric-sub" id="m-fuel-sub">EIA · verified weekly</div></div>
+        <div class="metric"><div class="metric-label">Last generated</div><div class="metric-value" id="m-last" style="font-size:16px;padding-top:6px">—</div><div class="metric-sub" id="m-last-loc">—</div></div>
+        <div class="metric"><div class="metric-label">Next auto-run</div><div class="metric-value" id="m-next" style="font-size:16px;padding-top:6px">—</div><div class="metric-sub">Monday 6 AM ET</div></div>
+        <div class="metric" id="m-fuel-tile" style="display:none"><div class="metric-label">Jet-A spot — Gulf Coast</div><div class="metric-value" id="m-fuel" style="font-size:22px">—</div><div class="metric-sub" id="m-fuel-sub">EIA · verified weekly</div></div>
       </div>
-      <div id="flagship-spotlight"></div>
-      <div class="card">
+      <div id="flagship-spotlight" class="reveal"></div>
+      <div class="card reveal">
         <div class="card-title" style="justify-content:space-between;flex-wrap:wrap;gap:10px">Latest reports — this week
-          <input class="search-input" id="dash-search" type="search" placeholder="Search locations — code, name, city…" oninput="dashQuery=this.value;renderDashboard()" style="font-weight:400">
+          <input class="search-input" id="dash-search" type="search" placeholder="Search locations — code, name, city…" oninput="dashQuery=this.value;renderDashboard()" style="font-weight:400;font-family:var(--sans);font-size:12px">
         </div>
         <div id="dash-grid" class="dash-grid"></div>
       </div>
       <div id="dash-report-view" style="display:none"></div>
     </div>
 
+    <!-- CHAT -->
+    <div id="panel-chat" class="panel">
+      <div class="eyebrow">Condor Intelligence Analyst</div>
+      <div class="page-title">Chat</div>
+      <div class="page-sub">Ask the embedded analyst anything about the portfolio — forecasts, location outlooks, competitor moves, briefing notes, or account summaries. Answers are grounded in the weekly report database.</div>
+      <div class="chat-shell">
+        <div class="chat-thread" id="chat-thread">
+          <div class="chat-empty" id="chat-empty">
+            <div class="ornament" style="max-width:200px"><span></span><svg width="13" height="13" viewBox="0 0 14 14"><path d="M7 0L8.6 5.4 14 7 8.6 8.6 7 14 5.4 8.6 0 7 5.4 5.4Z" fill="var(--gold)"/></svg><span></span></div>
+            <h3>How can I help you today?</h3>
+            <p>I have live access to every weekly report, KPI, composite score, and verified data feed in the Condor database. My specialty is forecasting — but I can also prepare briefings, comparisons, and account notes.</p>
+            <div class="chat-suggestions">
+              <button class="chat-chip" onclick="sendSuggestion(this)">What is the forecast for Van Nuys (VNY)?</button>
+              <button class="chat-chip" onclick="sendSuggestion(this)">Which locations weakened the most this month, and why?</button>
+              <button class="chat-chip" onclick="sendSuggestion(this)">Prepare an executive briefing on Teterboro for a board meeting.</button>
+              <button class="chat-chip" onclick="sendSuggestion(this)">How are jet fuel prices trending, and what does it mean for the portfolio?</button>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <textarea class="chat-input" id="chat-input" rows="1" placeholder="Ask about forecasts, locations, competitors…" onkeydown="chatKeydown(event)" oninput="autosizeInput(this)"></textarea>
+          <button class="chat-send" id="chat-send" onclick="sendChat()">Send</button>
+        </div>
+        <div class="chat-foot">Responses are AI-generated from the report database and may require verification for high-stakes decisions. Conversations are logged. <button class="chat-clear" onclick="clearChat()">Clear conversation</button></div>
+      </div>
+    </div>
+
     <!-- CHANGES -->
     <div id="panel-changes" class="panel">
+      <div class="eyebrow">Week over week</div>
       <div class="page-title">Changes</div>
-      <div class="page-sub">Week-over-week movement across the portfolio — position, ranking, and market-share shifts, newly mentioned competitors, and composite score deltas versus each location's prior report.</div>
-      <div id="changes-panel"></div>
+      <div class="page-sub">Movement across the portfolio — position, ranking, and market-share shifts, newly mentioned competitors, and composite score deltas versus each location's prior report.</div>
+      <div id="changes-panel" class="reveal"></div>
     </div>
 
     <!-- PERFORMANCE INDEX -->
     <div id="panel-index" class="panel">
+      <div class="eyebrow">Composite tracking</div>
       <div class="page-title">Performance index</div>
-      <div class="page-sub">TECHNICair &amp; Signature MRO portfolio success tracked week over week — a composite index built from the competitive variables already captured in every report.</div>
-      <div class="idx-controls">
+      <div class="page-sub">TECHNICair &amp; Signature MRO portfolio success tracked week over week — a composite index built from the competitive variables captured in every report.</div>
+      <div class="idx-controls reveal">
         <button class="filter-btn active" onclick="setIdxScope('all',this)">Full portfolio</button>
         <button class="filter-btn" onclick="setIdxScope('TECHNICair',this)">TECHNICair</button>
         <button class="filter-btn" data-cc="us" onclick="setIdxScope('US',this)">US</button>
         <button class="filter-btn" data-cc="uk" onclick="setIdxScope('UK',this)">UK</button>
         <select class="idx-select" id="idx-compare" onchange="renderIndex()"><option value="">Compare a location…</option></select>
       </div>
-      <div class="tape">
+      <div class="tape reveal">
         <div class="tape-ticker">
-          <span class="tape-symbol" id="idx-symbol">TECHNICAIR·IDX</span>
+          <span class="tape-symbol" id="idx-symbol">CONDOR·IDX</span>
           <span class="tape-value" id="idx-value">—</span>
           <span class="tape-delta" id="idx-delta"></span>
         </div>
@@ -336,25 +419,27 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="chart-wrap" id="idx-chart"></div>
         <div class="chart-legend" id="idx-legend"></div>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <div class="card-title">Location leaderboard — current score</div>
         <div class="tbl-scroll"><table class="tbl" id="idx-leaderboard"></table></div>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <div class="card-title">How the index is calculated</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.7">Each weekly report is scored 0–100 from five variables already tracked per location: <strong>competitive position</strong> (Signature Position — dominant/leading/competitive/marginal, 40%), <strong>positional ranking</strong> (#1 of N operators, 15%), <strong>market share</strong> (estimate or qualitative tier, 20%), <strong>market-signal momentum</strong> (net positive vs negative signals that week, 15%), and <strong>data confidence</strong> (share of KPIs with verified values, 10%). The portfolio index is the average across all in-scope locations for that week, rebased to 100 at the first tracked week — so it reads like a stock chart: above 100 means the portfolio is stronger than when tracking began.</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">Each weekly report is scored 0–100 from five variables already tracked per location: <strong>competitive position</strong> (Signature Position — dominant/leading/competitive/marginal, 40%), <strong>positional ranking</strong> (#1 of N operators, 15%), <strong>market share</strong> (estimate or qualitative tier, 20%), <strong>market-signal momentum</strong> (net positive vs negative signals that week, 15%), and <strong>data confidence</strong> (share of KPIs with verified values, 10%). The portfolio index is the average across all in-scope locations for that week, rebased to 100 at the first tracked week — above 100 means the portfolio is stronger than when tracking began.</p>
       </div>
     </div>
 
     <!-- WEEKLY SUMMARY -->
     <div id="panel-summary" class="panel">
+      <div class="eyebrow">Portfolio digest</div>
       <div class="page-title">Weekly summary</div>
       <div class="page-sub">Combined market intelligence across all 24 locations.</div>
-      <div id="summary-content"></div>
+      <div id="summary-content" class="reveal"></div>
     </div>
 
     <!-- ARCHIVE -->
     <div id="panel-archive" class="panel">
+      <div class="eyebrow">Historical record</div>
       <div class="page-title">Report archive</div>
       <div class="page-sub">All reports organized by week. Click a folder to expand.</div>
       <div class="filter-bar" style="align-items:center">
@@ -370,10 +455,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
     <!-- SOURCES -->
     <div id="panel-sources" class="panel">
+      <div class="eyebrow">Provenance</div>
       <div class="page-title">Data sources</div>
       <div class="page-sub">Every report is grounded in live web search via Perplexity Sonar. All sources are cited per claim. Click any link below to validate the underlying data yourself.</div>
 
-      <div class="card">
+      <div class="card reveal">
         <div class="card-title">Color code key</div>
         <table class="tbl">
           <thead><tr><th>Color</th><th>Region</th><th>Regulator</th><th>Locations</th></tr></thead>
@@ -394,7 +480,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         </table>
       </div>
 
-      <div class="card">
+      <div class="card reveal">
         <div class="card-title"><span class="country-dot us"></span>US sources</div>
         <table class="tbl">
           <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th><th>Link</th></tr></thead>
@@ -413,22 +499,22 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         </table>
       </div>
 
-      <div class="card">
+      <div class="card reveal">
         <div class="card-title"><span class="country-dot uk"></span>UK / EMEA sources</div>
         <table class="tbl">
           <thead><tr><th>Source</th><th>Data type</th><th>Cadence</th><th>Link</th></tr></thead>
           <tbody>
             <tr><td>UK CAA — Part 145 approvals</td><td>UK approved maintenance (MRO) organisations register</td><td>Updated as approvals change</td><td><a href="https://www.caa.co.uk/commercial-industry/aircraft/airworthiness/organisation-and-maintenance-programme-approvals/approved-airworthiness-organisations/" target="_blank" rel="noopener">caa.co.uk — approved airworthiness organisations</a></td></tr>
-            <tr><td>UK CAA — Part 145 overview</td><td>Part 145 approval requirements & guidance</td><td>As updated</td><td><a href="https://www.caa.co.uk/commercial-industry/aircraft/airworthiness/organisation-and-maintenance-programme-approvals/part-145/" target="_blank" rel="noopener">caa.co.uk/.../part-145</a></td></tr>
+            <tr><td>UK CAA — Part 145 overview</td><td>Part 145 approval requirements & guidance</td><td>As updated</td><td><a href="https://www.caa.co.uk/commercial-industry/aircraft/airworthiness/organisation-and-maintenance-programme-approvals/part-145/" target="_blank" rel="noopener">caa.co.uk/…/part-145</a></td></tr>
             <tr><td>UK CAA — Airport data</td><td>UK airport traffic & statistics</td><td>Monthly</td><td><a href="https://www.caa.co.uk/data-and-analysis/uk-aviation-market/airport-data/" target="_blank" rel="noopener">caa.co.uk/data-and-analysis/uk-aviation-market/airport-data</a></td></tr>
           </tbody>
         </table>
         <p style="font-size:12px;color:var(--text2);margin-top:.5rem">Note: the UK CAA publishes the Part 145 approved organisations list as a downloadable PDF from the page above (updated periodically) rather than a live searchable database — cross-check operator names against the latest PDF when verifying UK location reports.</p>
       </div>
 
-      <div class="card" style="border-left:3px solid var(--amber)">
+      <div class="card gold-top reveal">
         <div class="card-title" style="color:var(--amber-text)">Validation status</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.6">The links above are the authoritative sources used to generate and verify each report. KPI rows the generator cannot confirm against a named source are now <strong>omitted from report views</strong> rather than shown as "Not available" — anything unverifiable is listed under "Requires manual verification" inside the report instead. Facts for VNY and TEB (operations counts, terminal counts, competitor lists) were confirmed directly against LAWA, the Port Authority of NY&amp;NJ, Signature's press room, and AIN. Remaining per-location baseline estimates in <code>scripts/generate.js</code> (market share, EBITDA context) are clearly labeled as estimates in each report — spot-check against the links above before relying on one for a decision.</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">The links above are the authoritative sources used to generate and verify each report. KPI rows the generator cannot confirm against a named source are <strong>omitted from report views</strong> rather than shown as "Not available" — anything unverifiable is listed under "Requires manual verification" inside the report instead. Facts for VNY and TEB (operations counts, terminal counts, competitor lists) were confirmed directly against LAWA, the Port Authority of NY&amp;NJ, Signature's press room, and AIN. Remaining per-location baseline estimates in <code>scripts/generate.js</code> (market share, EBITDA context) are clearly labeled as estimates in each report — spot-check against the links above before relying on one for a decision.</p>
       </div>
     </div>
 
@@ -451,6 +537,16 @@ let currentFilter = 'all';
 let idxScope = 'all';
 let dashQuery = '';
 let archiveQuery = '';
+
+// ============================================================
+// SCROLL REVEAL — IntersectionObserver, re-triggering both ways
+// ============================================================
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+}, { threshold: 0.1 });
+function observeReveals() {
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
 
 function matchesQuery(r, q) {
   if (!q) return true;
@@ -491,8 +587,8 @@ const FLAGSHIPS = {
 };
 
 // ============================================================
-// SUCCESS SCORING — composite 0-100 per report, from variables
-// already tracked in every report_json
+// SUCCESS SCORING — composite 0-100 per report. The same logic
+// runs server-side in lib/condor-data.js — keep in sync.
 // ============================================================
 function kpiVal(kpis, field) {
   return (kpis.find(k => k.field === field) || {}).value || '';
@@ -551,7 +647,6 @@ function isNA(v) {
   return !s || ['not available','not publicly available','n/a','na','unknown','unavailable','none','not applicable','tbd','not found'].some(x => s === x || s.startsWith(x + '.') || s.startsWith(x + ' -'));
 }
 
-// Build weekly index series for the given scope. Returns {dates, series:[{name,color,values}]}
 function scopeFilter(r) {
   if (idxScope === 'US' || idxScope === 'UK') return r.country === idxScope;
   if (idxScope === 'TECHNICair') return (r.facility_type||'').includes('TECHNICair');
@@ -590,9 +685,10 @@ function buildLocationSeries(code, dates) {
 
 function initApp() {
   dbClient = window.supabase.createClient(CONDOR_DB_URL, CONDOR_DB_KEY);
-  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('dash-date').textContent = 'Prepared ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + ' — weekly market intelligence for the Signature Aviation MRO portfolio.';
   setNextRun();
   renderSpotlight();
+  observeReveals();
   loadReports();
 }
 
@@ -602,7 +698,7 @@ async function loadReports() {
     if (error) throw error;
     allReports = data || [];
     document.getElementById('load-alert').style.display = 'none';
-    document.getElementById('conn-status').textContent = 'Connected ✓';
+    document.getElementById('conn-status').textContent = 'Connected';
     document.getElementById('m-total').textContent = allReports.length;
     if (allReports.length > 0) {
       const last = allReports[0];
@@ -626,6 +722,7 @@ async function loadReports() {
     renderLeaderboard();
     renderSpotlight();
     renderChanges();
+    observeReveals();
   } catch(err) {
     showError(err.message);
   }
@@ -655,7 +752,7 @@ function renderDashboard() {
     const isFlagship = !!FLAGSHIPS[r.location_code];
     const isTop = top && top.code === r.location_code;
     return `<div class="dash-card ${cc}${isFlagship?' flagship':''}" onclick="showReportInDash('${r.id}')">
-      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px">${esc(r.location_code)}</span>${isFlagship?'<span class="badge badge-gold">★ Most popular</span>':''}${isTop?'<span class="badge badge-flag">⚑ Highest performing this week</span>':''}</div>
+      <div class="dash-card-title">${esc(r.location_name)} <span style="opacity:.7;font-weight:500;font-size:11px;font-family:var(--sans)">${esc(r.location_code)}</span>${isFlagship?'<span class="badge badge-gold">★ Most popular</span>':''}${isTop?'<span class="badge badge-flag">⚑ Top performer</span>':''}</div>
       <div class="dash-card-meta">${esc(r.city)} · ${esc(r.facility_type)} · <span class="badge badge-on-${cc}">${esc(r.country)}</span></div>
       ${preview ? `<div class="dash-card-preview">${esc(preview)}</div>` : ''}
     </div>`;
@@ -672,18 +769,129 @@ function showReportInDash(id) {
 }
 
 // ============================================================
+// CHAT — Condor Intelligence Analyst (Claude via /api/chat)
+// ============================================================
+let chatHistory = [];
+let chatBusy = false;
+const chatSessionId = (() => {
+  try {
+    let id = localStorage.getItem('condor-chat-session');
+    if (!id) { id = crypto.randomUUID(); localStorage.setItem('condor-chat-session', id); }
+    return id;
+  } catch { return null; }
+})();
+
+function autosizeInput(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+function sendSuggestion(btn) {
+  document.getElementById('chat-input').value = btn.textContent;
+  sendChat();
+}
+function appendMsg(role, text, isError) {
+  const thread = document.getElementById('chat-thread');
+  const empty = document.getElementById('chat-empty');
+  if (empty) empty.remove();
+  const div = document.createElement('div');
+  div.className = 'msg ' + (isError ? 'error' : role);
+  const label = document.createElement('div');
+  label.className = 'msg-role';
+  label.textContent = role === 'user' ? 'You' : 'Analyst';
+  div.appendChild(label);
+  const body = document.createElement('div');
+  if (role === 'assistant' && !isError) body.innerHTML = renderMarkdownLite(text);
+  else body.textContent = text;
+  div.appendChild(body);
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
+  return div;
+}
+// Minimal, escaped markdown rendering: **bold**, bullet lines, paragraph breaks.
+function renderMarkdownLite(text) {
+  const escaped = esc(text);
+  return escaped
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.+)$/gm, '<strong>$1</strong>')
+    .replace(/^## (.+)$/gm, '<strong>$1</strong>')
+    .replace(/^[-•] /gm, '&nbsp;&nbsp;• ');
+}
+async function sendChat() {
+  if (chatBusy) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  autosizeInput(input);
+  chatBusy = true;
+  document.getElementById('chat-send').disabled = true;
+
+  appendMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  const thread = document.getElementById('chat-thread');
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  thread.appendChild(typing);
+  thread.scrollTop = thread.scrollHeight;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: chatSessionId, messages: chatHistory }),
+    });
+    const data = await res.json().catch(() => ({}));
+    typing.remove();
+    if (!res.ok) {
+      appendMsg('assistant', data.error || `The analyst is unavailable right now (HTTP ${res.status}). Please try again.`, true);
+      chatHistory.pop();
+    } else {
+      appendMsg('assistant', data.reply);
+      chatHistory.push({ role: 'assistant', content: data.reply });
+    }
+  } catch (err) {
+    typing.remove();
+    appendMsg('assistant', 'Could not reach the analyst service. Check your connection and try again.', true);
+    chatHistory.pop();
+  } finally {
+    chatBusy = false;
+    document.getElementById('chat-send').disabled = false;
+    input.focus();
+  }
+}
+function clearChat() {
+  chatHistory = [];
+  try { localStorage.setItem('condor-chat-session', crypto.randomUUID()); } catch {}
+  const thread = document.getElementById('chat-thread');
+  thread.innerHTML = `<div class="chat-empty" id="chat-empty">
+    <div class="ornament" style="max-width:200px"><span></span><svg width="13" height="13" viewBox="0 0 14 14"><path d="M7 0L8.6 5.4 14 7 8.6 8.6 7 14 5.4 8.6 0 7 5.4 5.4Z" fill="var(--gold)"/></svg><span></span></div>
+    <h3>How can I help you today?</h3>
+    <p>I have live access to every weekly report, KPI, composite score, and verified data feed in the Condor database. My specialty is forecasting — but I can also prepare briefings, comparisons, and account notes.</p>
+    <div class="chat-suggestions">
+      <button class="chat-chip" onclick="sendSuggestion(this)">What is the forecast for Van Nuys (VNY)?</button>
+      <button class="chat-chip" onclick="sendSuggestion(this)">Which locations weakened the most this month, and why?</button>
+      <button class="chat-chip" onclick="sendSuggestion(this)">Prepare an executive briefing on Teterboro for a board meeting.</button>
+      <button class="chat-chip" onclick="sendSuggestion(this)">How are jet fuel prices trending, and what does it mean for the portfolio?</button>
+    </div>
+  </div>`;
+}
+
+// ============================================================
 // WEEKLY SUMMARY
 // ============================================================
 function renderSummary() {
   const container = document.getElementById('summary-content');
   if (!allReports.length) { container.innerHTML = '<p style="font-size:13px;color:var(--text3)">No reports available yet.</p>'; return; }
 
-  // Get latest report per location
   const seen = new Set();
   const latest = allReports.filter(r => { if(seen.has(r.location_code)) return false; seen.add(r.location_code); return true; });
   const weekLabel = latest[0]?.week_label || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 
-  // Split US and UK
   const us = latest.filter(r => r.country === 'US');
   const uk = latest.filter(r => r.country === 'UK');
 
@@ -701,14 +909,14 @@ function renderSummary() {
     if (position) text += `Position: <strong>${esc(position)}</strong>${rank ? ` (${esc(rank)})` : ''}. `;
     if (outlook) text += esc(outlook);
     if (topSignal) text += ` <em>${esc(topSignal.signal)}</em>`;
-    const cc = r.country === 'UK' ? 'uk' : 'us';
     return `<div class="summary-row"><div class="summary-loc">${esc(r.location_code)}</div><div class="summary-text">${text}</div></div>`;
   };
 
   container.innerHTML = `
     <div class="summary-hero">
-      <h2>Week of ${esc(weekLabel)}</h2>
-      <p>Combined market intelligence — ${latest.length} locations across US and UK/EMEA. Generated automatically every Monday at 6 AM ET via Perplexity live web search.</p>
+      <div class="eyebrow" style="color:var(--gold2)">Week of ${esc(weekLabel)}</div>
+      <h2>Portfolio digest</h2>
+      <p>Combined market intelligence — ${latest.length} locations across US and UK/EMEA. Generated automatically every Monday at 6 AM ET via live web search.</p>
     </div>
     <div class="summary-section us">
       <h3>United States — ${us.length} locations</h3>
@@ -720,7 +928,7 @@ function renderSummary() {
     </div>
     <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" onclick="window.print()">Print / Save as PDF</button>
-      <button class="btn" onclick="downloadSummaryCSV()" style="background:var(--us);color:#fff">Download CSV</button>
+      <button class="btn btn-navy" onclick="downloadSummaryCSV()">Download CSV</button>
     </div>`;
 }
 
@@ -736,7 +944,6 @@ function renderArchive(filter) {
   else if (filter === 'FBO') reports = allReports.filter(r => r.facility_type?.includes('FBO') || r.facility_type?.includes('Line'));
   reports = reports.filter(r => matchesQuery(r, archiveQuery));
 
-  // Group by week (report_date)
   const weeks = {};
   reports.forEach(r => {
     const key = r.report_date || r.created_at?.slice(0,10) || 'Unknown';
@@ -813,13 +1020,13 @@ function toggleLocReport(wi, id) {
 }
 
 function filterArchive(filter, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#panel-archive .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderArchive(filter);
 }
 
 // ============================================================
-// REPORT RENDERER — clean, no status flags
+// REPORT RENDERER
 // ============================================================
 function renderReportHTML(r) {
   const d = r.report_json || {};
@@ -829,8 +1036,6 @@ function renderReportHTML(r) {
   const gaps = d.data_gaps || [];
   const sources = d.sources_cited || [];
 
-  // Only show KPIs with real values — rows the generator couldn't verify are
-  // dropped here and surfaced in the "Requires manual verification" card instead
   const kpisShown = kpis.filter(k => !isNA(k.value));
   const kpiHtml = kpisShown.map(k => `
     <div class="kpi-item">
@@ -852,8 +1057,8 @@ function renderReportHTML(r) {
 
   const gapsFiltered = gaps.filter(g => g && !g.toLowerCase().includes('no information') && g.length > 5);
   const gapHtml = gapsFiltered.length ? `
-    <div class="card" style="border-left:3px solid var(--amber);margin-top:.75rem">
-      <div class="card-title" style="color:var(--amber-text)">Requires manual verification</div>
+    <div class="card gold-top" style="margin-top:.75rem">
+      <div class="card-title" style="color:var(--amber-text);font-size:16px">Requires manual verification</div>
       <ul style="padding-left:1.25rem">${gapsFiltered.map(g=>`<li style="font-size:12px;color:var(--text2);margin-bottom:3px">${esc(g)}</li>`).join('')}</ul>
     </div>` : '';
 
@@ -862,28 +1067,27 @@ function renderReportHTML(r) {
   const cc = (d.country||r.country) === 'UK' ? 'uk' : 'us';
   return `<div class="report-view">
     <div class="report-header ${cc}">
-      <div class="report-title">${esc(d.location_name||r.location_name||'')} <span style="opacity:.7;font-weight:500;font-size:14px">(${esc(d.location_code||r.location_code||'')})</span> <span class="badge badge-on-${cc}">${esc(d.country||r.country||'')}</span></div>
+      <div class="report-title">${esc(d.location_name||r.location_name||'')} <span style="opacity:.7;font-weight:500;font-size:14px;font-family:var(--sans)">(${esc(d.location_code||r.location_code||'')})</span> <span class="badge badge-on-${cc}">${esc(d.country||r.country||'')}</span></div>
       <div class="report-meta">${esc(d.city||r.city||'')} · ${esc(d.facility_type||r.facility_type||'')} · ${esc(d.week_label||d.report_date||'')}</div>
     </div>
 
     <div class="card">
-      <div class="card-title ${cc}">Executive summary</div>
-      ${es.market_context ? `<div style="margin-bottom:.75rem"><div class="section-title ${cc}">Market context</div><p style="font-size:13px;line-height:1.7">${esc(es.market_context)}</p></div>` : ''}
-      ${es.competitive_landscape ? `<div style="margin-bottom:.75rem"><div class="section-title ${cc}">Competitive landscape</div><p style="font-size:13px;line-height:1.7">${esc(es.competitive_landscape)}</p></div>` : ''}
-      ${es.strategic_outlook ? `<div><div class="section-title ${cc}">Strategic outlook</div><p style="font-size:13px;line-height:1.7">${esc(es.strategic_outlook)}</p></div>` : ''}
+      <div class="card-title">Executive summary</div>
+      ${es.market_context ? `<div style="margin-bottom:.75rem"><div class="section-title">Market context</div><p style="font-size:13px;line-height:1.7">${esc(es.market_context)}</p></div>` : ''}
+      ${es.competitive_landscape ? `<div style="margin-bottom:.75rem"><div class="section-title">Competitive landscape</div><p style="font-size:13px;line-height:1.7">${esc(es.competitive_landscape)}</p></div>` : ''}
+      ${es.strategic_outlook ? `<div><div class="section-title">Strategic outlook</div><p style="font-size:13px;line-height:1.7">${esc(es.strategic_outlook)}</p></div>` : ''}
     </div>
 
-    ${kpisShown.length ? `<div class="card"><div class="card-title ${cc}">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
-    ${signals.length ? `<div class="card"><div class="card-title ${cc}">Market signals</div>${signalHtml}</div>` : ''}
+    ${kpisShown.length ? `<div class="card"><div class="card-title">Market KPIs</div><div class="kpi-grid">${kpiHtml}</div></div>` : ''}
+    ${signals.length ? `<div class="card"><div class="card-title">Market signals</div>${signalHtml}</div>` : ''}
     ${gapHtml}
-    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title ${cc}">Sources cited</div>${srcHtml}</div>` : ''}
+    ${srcHtml ? `<div style="margin-top:.75rem"><div class="section-title">Sources cited</div>${srcHtml}</div>` : ''}
   </div>`;
 }
 
 // ============================================================
 // WHAT CHANGED THIS WEEK — diff latest vs prior report per location.
-// The same logic runs server-side in scripts/send_summary.js for the
-// email newsletter — keep the two in sync if the heuristics change.
+// Same logic runs server-side in scripts/send_summary.js — keep in sync.
 // ============================================================
 function competitorNames(v) {
   return String(v || '').split(/[,;]/)
@@ -1044,17 +1248,14 @@ function drawStockChart(container, dates, series) {
   const x = i => dates.length > 1 ? L + (W-L-R) * i / (dates.length-1) : (L + W - R) / 2;
   const y = v => T + (H-T-B) * (1 - (v - min) / (max - min));
 
-  // gridlines — recessive
   const nTicks = 5; let grid = '';
   for (let g = 0; g <= nTicks; g++) {
     const v = min + (max-min)*g/nTicks, yy = y(v);
     grid += `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
              <text x="${L-8}" y="${yy+3.5}" text-anchor="end" font-size="10" fill="rgba(255,255,255,.45)">${v.toFixed(0)}</text>`;
   }
-  // baseline at 100
   if (min < 100 && max > 100) grid += `<line x1="${L}" x2="${W-R}" y1="${y(100)}" y2="${y(100)}" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-dasharray="3 4"/>`;
 
-  // x labels — at most 8
   const step = Math.max(1, Math.ceil(dates.length / 8)); let xlabels = '';
   dates.forEach((d, i) => { if (i % step === 0 || i === dates.length-1) xlabels += `<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.45)">${esc(fmtDate(d))}</text>`; });
 
@@ -1080,7 +1281,6 @@ function drawStockChart(container, dates, series) {
     <rect id="hit" x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent"/>
   </svg><div class="chart-tip" id="idx-tip"></div>`;
 
-  // crosshair + tooltip
   const svg = container.querySelector('svg');
   const tip = container.querySelector('#idx-tip');
   const xh = svg.querySelector('#xhair');
@@ -1121,7 +1321,6 @@ function fmtDate(d) {
   return isNaN(dt) ? d : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// Leaderboard — latest score + WoW change per location; flags the top performer
 function currentScores() {
   const byLoc = {};
   allReports.forEach(r => {
@@ -1147,7 +1346,7 @@ function renderLeaderboard() {
       const cc = r.country === 'UK' ? 'uk' : 'us';
       const dcls = r.delta == null ? 'flat' : r.delta > 0.05 ? 'up' : r.delta < -0.05 ? 'down' : 'flat';
       const dtxt = r.delta == null ? '—' : `${r.delta>0?'▲ +':r.delta<0?'▼ ':''}${r.delta.toFixed(1)}`;
-      const flags = (i === 0 ? '<span class="badge badge-flag">⚑ Highest performing this week</span> ' : '') + (FLAGSHIPS[r.code] ? '<span class="badge badge-gold">★ Most popular</span>' : '');
+      const flags = (i === 0 ? '<span class="badge badge-flag">⚑ Top performer</span> ' : '') + (FLAGSHIPS[r.code] ? '<span class="badge badge-gold">★ Most popular</span>' : '');
       return `<tr><td>${i+1}</td><td><span class="country-dot ${cc}"></span><strong>${esc(r.code)}</strong> ${esc(r.name)}</td><td>${esc(r.type||'')}</td><td class="ldr-score">${r.score.toFixed(1)}</td><td class="ldr-delta ${dcls}">${dtxt}</td><td>${flags}</td></tr>`;
     }).join('') + '</tbody>';
 }
@@ -1161,7 +1360,7 @@ function renderSpotlight() {
   el.innerHTML = `<div class="spotlight-grid">` + Object.values(FLAGSHIPS).map(f => {
     const isTop = top && top.code === f.code;
     return `<div class="spotlight">
-      <h3>${esc(f.name)} <span style="opacity:.6;font-weight:600;font-size:12px">${esc(f.code)}</span> <span class="badge badge-gold">★ Most popular</span>${isTop?' <span class="badge badge-flag">⚑ Highest performing this week</span>':''}</h3>
+      <h3>${esc(f.name)} <span style="opacity:.6;font-weight:600;font-size:12px;font-family:var(--sans)">${esc(f.code)}</span> <span class="badge badge-gold">★ Most popular</span>${isTop?' <span class="badge badge-flag">⚑ Top performer</span>':''}</h3>
       <div class="spot-sub">${esc(f.tagline)}</div>
       <p>${esc(f.context)}</p>
       <div class="spot-facts">${f.facts.map(x=>`<div class="spot-fact"><div class="sf-label">${esc(x.label)}</div><div class="sf-value">${esc(x.value)}</div><div class="sf-src">${esc(x.src)}</div></div>`).join('')}</div>
@@ -1183,6 +1382,7 @@ function nav(id) {
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   document.querySelector(`[onclick="nav('${id}')"]`).classList.add('active');
+  if (id === 'chat') setTimeout(() => document.getElementById('chat-input').focus(), 50);
 }
 function setNextRun() {
   const now = new Date();
