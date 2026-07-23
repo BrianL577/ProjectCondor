@@ -260,20 +260,29 @@ body{font-family:var(--sans);background:var(--bg);background-image:radial-gradie
 .chat-suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .chat-chip{padding:8px 14px;border:1px solid var(--border2);border-radius:2px;background:var(--surface);font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit;text-align:left}
 .chat-chip:hover{border-color:var(--gold);color:var(--us);background:var(--gold-soft)}
-.msg{max-width:78%;padding:.8rem 1.05rem;border-radius:var(--r);font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-wrap:break-word}
+.msg{max-width:78%;padding:.8rem 1.05rem;border-radius:var(--r);font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-wrap:break-word;animation:msg-in .5s cubic-bezier(.16,1,.3,1) both}
 .msg.user{align-self:flex-end;background:linear-gradient(140deg,var(--us),var(--us2));color:#fff;border-bottom-right-radius:0}
 .msg.assistant{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:0}
 .msg.assistant strong{color:var(--us)}
 .msg-role{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;opacity:.6}
 .msg.error{align-self:flex-start;background:var(--red-bg);border:1px solid #f0a8a8;color:var(--red-text)}
-.chat-typing{align-self:flex-start;display:flex;gap:5px;padding:.9rem 1.1rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);border-bottom-left-radius:0}
+@keyframes msg-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.type-word{display:inline-block;opacity:0;animation:word-in .4s ease forwards}
+@keyframes word-in{to{opacity:1}}
+.chat-typing{align-self:flex-start;display:flex;gap:5px;padding:.9rem 1.1rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);border-bottom-left-radius:0;animation:msg-in .4s cubic-bezier(.16,1,.3,1) both;transition:opacity .25s ease,transform .25s ease}
+.chat-typing.fade-out{opacity:0;transform:translateY(-6px)}
 .chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:pulse 1.2s infinite ease-in-out}
 .chat-typing span:nth-child(2){animation-delay:.15s}
 .chat-typing span:nth-child(3){animation-delay:.3s}
 @keyframes pulse{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){.msg,.chat-typing{animation:none}.type-word{opacity:1;animation:none}}
 .chat-input-bar{border-top:1px solid var(--border);padding:1rem 1.25rem;display:flex;gap:10px;align-items:flex-end;background:var(--surface)}
-.chat-input{flex:1;resize:none;border:none;border-bottom:1.5px solid var(--border2);background:transparent;font-family:inherit;font-size:13.5px;color:var(--text);line-height:1.5;padding:8px 2px 10px;outline:none;max-height:140px;transition:border-color .15s}
+.chat-input{flex:1;resize:none;border:none;border-bottom:1.5px solid var(--border2);background:transparent;font-family:inherit;font-size:13.5px;color:var(--text);line-height:1.5;padding:8px 2px 10px;outline:none;max-height:140px;overflow-y:auto;transition:border-color .15s}
 .chat-input:focus{border-bottom-color:var(--gold)}
+/* Hidden-but-functional scrollbars — content still scrolls, the track just
+   doesn't render, matching the restrained-chrome treatment used elsewhere. */
+.chat-thread,.chat-input,.sidebar,.tbl-scroll{scrollbar-width:none;-ms-overflow-style:none}
+.chat-thread::-webkit-scrollbar,.chat-input::-webkit-scrollbar,.sidebar::-webkit-scrollbar,.tbl-scroll::-webkit-scrollbar{display:none}
 .chat-send{flex-shrink:0;padding:10px 22px;border-radius:2px;border:none;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#241a02;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 24px -12px rgba(186,138,40,.6);transition:filter .15s;font-family:inherit}
 .chat-send:hover:not(:disabled){filter:brightness(1.05)}
 .chat-send:disabled{background:var(--border2);color:var(--text3);box-shadow:none;cursor:not-allowed}
@@ -792,6 +801,8 @@ function sendSuggestion(btn) {
   document.getElementById('chat-input').value = btn.textContent;
   sendChat();
 }
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function appendMsg(role, text, isError) {
   const thread = document.getElementById('chat-thread');
   const empty = document.getElementById('chat-empty');
@@ -803,11 +814,17 @@ function appendMsg(role, text, isError) {
   label.textContent = role === 'user' ? 'You' : 'Analyst';
   div.appendChild(label);
   const body = document.createElement('div');
-  if (role === 'assistant' && !isError) body.innerHTML = renderMarkdownLite(text);
-  else body.textContent = text;
   div.appendChild(body);
   thread.appendChild(div);
   thread.scrollTop = thread.scrollHeight;
+
+  if (role === 'assistant' && !isError && !prefersReducedMotion) {
+    typeReveal(body, text, thread);
+  } else if (role === 'assistant' && !isError) {
+    body.innerHTML = renderMarkdownLite(text);
+  } else {
+    body.textContent = text;
+  }
   return div;
 }
 // Minimal, escaped markdown rendering: **bold**, bullet lines, paragraph breaks.
@@ -818,6 +835,27 @@ function renderMarkdownLite(text) {
     .replace(/^### (.+)$/gm, '<strong>$1</strong>')
     .replace(/^## (.+)$/gm, '<strong>$1</strong>')
     .replace(/^[-•] /gm, '&nbsp;&nbsp;• ');
+}
+// Reveal assistant replies word-by-word (a restrained "typing" motion, not a
+// full streaming implementation — the API returns the complete answer, so
+// this animates its arrival rather than its generation). Settles into the
+// fully-formatted markdown-lite HTML once every word has appeared, so bold
+// text and bullets render correctly at rest.
+function typeReveal(el, text, thread) {
+  const tokens = text.split(/(\s+)/).filter(t => t.length);
+  let i = 0;
+  const step = () => {
+    if (i >= tokens.length) { el.innerHTML = renderMarkdownLite(text); thread.scrollTop = thread.scrollHeight; return; }
+    const tok = tokens[i++];
+    if (/^\s+$/.test(tok)) { el.appendChild(document.createTextNode(tok)); step(); return; }
+    const span = document.createElement('span');
+    span.className = 'type-word';
+    span.textContent = tok;
+    el.appendChild(span);
+    thread.scrollTop = thread.scrollHeight;
+    setTimeout(step, 14);
+  };
+  step();
 }
 async function sendChat() {
   if (chatBusy) return;
@@ -846,7 +884,7 @@ async function sendChat() {
       body: JSON.stringify({ session_id: chatSessionId, messages: chatHistory }),
     });
     const data = await res.json().catch(() => ({}));
-    typing.remove();
+    fadeOutTyping(typing);
     if (!res.ok) {
       appendMsg('assistant', data.error || `The analyst is unavailable right now (HTTP ${res.status}). Please try again.`, true);
       chatHistory.pop();
@@ -855,7 +893,7 @@ async function sendChat() {
       chatHistory.push({ role: 'assistant', content: data.reply });
     }
   } catch (err) {
-    typing.remove();
+    fadeOutTyping(typing);
     appendMsg('assistant', 'Could not reach the analyst service. Check your connection and try again.', true);
     chatHistory.pop();
   } finally {
@@ -863,6 +901,11 @@ async function sendChat() {
     document.getElementById('chat-send').disabled = false;
     input.focus();
   }
+}
+function fadeOutTyping(el) {
+  if (prefersReducedMotion) { el.remove(); return; }
+  el.classList.add('fade-out');
+  setTimeout(() => el.remove(), 220);
 }
 function clearChat() {
   chatHistory = [];
