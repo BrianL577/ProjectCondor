@@ -30,6 +30,34 @@ create policy "Public read access"
   to anon
   using (true);
 
+-- ============================================================
+-- AI chat logging — conversations with the Condor Intelligence
+-- Analyst (the Chat tab) are persisted here. Written ONLY by the
+-- server (service key); no anonymous read/write policies exist,
+-- so RLS keeps these tables private to the backend.
+-- ============================================================
+
+create table if not exists chat_sessions (
+  id         uuid primary key,
+  title      text,
+  created_at timestamptz default now()
+);
+
+create table if not exists chat_messages (
+  id         bigserial primary key,
+  session_id uuid references chat_sessions(id) on delete cascade,
+  role       text not null check (role in ('user','assistant')),
+  content    text not null,
+  meta       jsonb default '{}'::jsonb,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_chat_messages_session on chat_messages(session_id, created_at);
+
+alter table chat_sessions enable row level security;
+alter table chat_messages enable row level security;
+-- Intentionally NO anon policies: only the service role (server) can access.
+
 -- Confirm setup
 select 'Database setup complete. Table created with ' || count(*) || ' rows.' as status
 from reports;

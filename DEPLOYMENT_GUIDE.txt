@@ -165,6 +165,54 @@ From now on:
 You never have to do anything. It runs itself.
 
 ================================================================
+STEP 8 — ENABLE THE AI CHAT (Condor Intelligence Analyst)
+================================================================
+The Chat tab is powered by Claude (Anthropic) through a serverless
+function at /api/chat. It reads the report database and answers
+forecasts, briefings, and lookups for executives.
+
+1. In Vercel → your project → Settings → Environment Variables, add:
+
+   Name: ANTHROPIC_API_KEY
+   Value: your Claude API key (from console.anthropic.com)
+
+   Name: SUPABASE_URL
+   Value: your Supabase Project URL
+
+   Name: SUPABASE_SERVICE_KEY
+   Value: your Supabase service_role key (server-only — never put
+          this in the HTML)
+
+2. In Vercel → Settings → General, make sure:
+   - Root Directory is the REPOSITORY ROOT (blank), NOT web/public.
+     The api/ folder must be inside the project root for the
+     serverless functions to deploy. Static files are served from
+     web/public via the "outputDirectory" in vercel.json.
+   - Framework Preset: Other
+
+3. Re-run the SQL in setup_database.sql in Supabase (it is
+   idempotent). This creates the chat_sessions / chat_messages
+   tables where every conversation is logged. These tables have
+   row-level security with NO anonymous policies — only the server
+   can read or write them.
+
+4. Redeploy. Open the site → Chat tab → ask:
+   "What is the forecast for Van Nuys?"
+
+================================================================
+FUTURE — ENKI DATA FEED (not yet live)
+================================================================
+Reports are currently generated weekly via Perplexity (GitHub
+Action). A direct feed from the "Enki" AI is planned. The endpoint
+already exists at POST /api/ingest and accepts reports in the same
+report_json schema, authenticated with a Bearer token.
+
+To enable it later, add in Vercel:
+   Name: ENKI_API_TOKEN
+   Value: a long random secret shared with the Enki system
+Until that variable is set, the endpoint returns 503 (disabled).
+
+================================================================
 OPTIONAL — CUSTOM DOMAIN
 ================================================================
 If you want condor.argi.com instead of condor-market-intelligence.vercel.app:
