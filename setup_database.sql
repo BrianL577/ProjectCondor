@@ -25,10 +25,18 @@ create index if not exists idx_reports_country  on reports(country);
 -- The website never writes — only the GitHub Action writes (using the service key)
 alter table reports enable row level security;
 
-create policy "Public read access"
-  on reports for select
-  to anon
-  using (true);
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public' and tablename = 'reports' and policyname = 'Public read access'
+  ) then
+    create policy "Public read access"
+      on reports for select
+      to anon
+      using (true);
+  end if;
+end $$;
 
 -- ============================================================
 -- AI chat logging — conversations with the Condor Intelligence
