@@ -290,6 +290,16 @@ body{font-family:var(--sans);background:var(--bg);background-image:radial-gradie
 .chat-clear{background:none;border:none;color:var(--text3);font-size:10.5px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0}
 .chat-clear:hover{color:var(--red)}
 
+.msg-actions{display:flex;justify-content:flex-end;gap:2px;margin:6px -.3rem -.3rem 0}
+.msg-action-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:none;color:var(--text3);font-size:10.5px;font-family:inherit;cursor:pointer;padding:4px 6px;border-radius:3px;transition:color .15s,background .15s}
+.msg-action-btn:hover{color:var(--us);background:var(--gold-soft)}
+.msg-action-btn svg{flex-shrink:0}
+.msg-action-btn.copied{color:var(--us)}
+.msg-share-menu{position:relative}
+.msg-share-dropdown{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);min-width:150px;padding:4px;z-index:60}
+.msg-share-dropdown a,.msg-share-dropdown button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;font-size:12px;color:var(--text2);text-decoration:none;background:none;border:none;font-family:inherit;cursor:pointer;border-radius:3px;text-align:left}
+.msg-share-dropdown a:hover,.msg-share-dropdown button:hover{background:var(--gold-soft);color:var(--us)}
+
 /* ---------- Responsive ---------- */
 @media(max-width:700px){
   .app{flex-direction:column}
@@ -819,13 +829,86 @@ function appendMsg(role, text, isError) {
   thread.scrollTop = thread.scrollHeight;
 
   if (role === 'assistant' && !isError && !prefersReducedMotion) {
-    typeReveal(body, text, thread);
+    typeReveal(body, text, thread, () => div.appendChild(buildMsgActions(text)));
   } else if (role === 'assistant' && !isError) {
     body.innerHTML = renderMarkdownLite(text);
+    div.appendChild(buildMsgActions(text));
   } else {
     body.textContent = text;
   }
   return div;
+}
+// Bottom-right copy/share row for a settled assistant reply.
+function buildMsgActions(text) {
+  const row = document.createElement('div');
+  row.className = 'msg-actions';
+
+  const copyBtn = document.createElement('button');
+  copyBtn.type = 'button';
+  copyBtn.className = 'msg-action-btn';
+  copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span>';
+  copyBtn.onclick = () => copyMsgText(copyBtn, text);
+  row.appendChild(copyBtn);
+
+  const shareWrap = document.createElement('div');
+  shareWrap.className = 'msg-share-menu';
+  const shareBtn = document.createElement('button');
+  shareBtn.type = 'button';
+  shareBtn.className = 'msg-action-btn';
+  shareBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg><span>Share</span>';
+  shareBtn.onclick = (e) => { e.stopPropagation(); openShare(shareBtn, shareWrap, text); };
+  shareWrap.appendChild(shareBtn);
+  row.appendChild(shareWrap);
+
+  return row;
+}
+async function copyMsgText(btn, text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    const label = btn.querySelector('span');
+    const prev = label.textContent;
+    btn.classList.add('copied');
+    label.textContent = 'Copied';
+    setTimeout(() => { btn.classList.remove('copied'); label.textContent = prev; }, 1500);
+  } catch (err) {
+    console.error('Copy failed', err);
+  }
+}
+function openShare(btn, wrap, text) {
+  // Prefer the native OS share sheet (covers WhatsApp, Discord, Mail, etc. on
+  // mobile and most desktop browsers) and only fall back to a manual menu.
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => {});
+    return;
+  }
+  const wasOpen = wrap._dd;
+  closeAllShareDropdowns();
+  if (wasOpen) return;
+  const dd = document.createElement('div');
+  dd.className = 'msg-share-dropdown';
+  const encoded = encodeURIComponent(text);
+  dd.innerHTML =
+    '<a href="https://wa.me/?text=' + encoded + '" target="_blank" rel="noopener">WhatsApp</a>' +
+    '<a href="mailto:?body=' + encoded + '">Gmail / Email</a>' +
+    '<button type="button" data-copy-share>Copy for Discord / WeChat</button>';
+  dd.querySelector('[data-copy-share]').onclick = () => { copyMsgText(btn, text); closeAllShareDropdowns(); };
+  document.body.appendChild(dd);
+  const r = btn.getBoundingClientRect();
+  const ddRect = dd.getBoundingClientRect();
+  const top = r.top - ddRect.height - 4 >= 0 ? r.top - ddRect.height - 4 : r.bottom + 4;
+  const left = Math.min(r.right - ddRect.width, window.innerWidth - ddRect.width - 8);
+  dd.style.top = top + 'px';
+  dd.style.left = Math.max(8, left) + 'px';
+  wrap._dd = dd;
+  setTimeout(() => {
+    document.addEventListener('click', function onDocClick(e) {
+      if (!wrap.contains(e.target) && !dd.contains(e.target)) { closeAllShareDropdowns(); document.removeEventListener('click', onDocClick); }
+    });
+  }, 0);
+}
+function closeAllShareDropdowns() {
+  document.querySelectorAll('.msg-share-menu').forEach(el => { el._dd = null; });
+  document.querySelectorAll('.msg-share-dropdown').forEach(el => el.remove());
 }
 // Minimal, escaped markdown rendering: **bold**, bullet lines, paragraph breaks.
 function renderMarkdownLite(text) {
@@ -841,11 +924,11 @@ function renderMarkdownLite(text) {
 // this animates its arrival rather than its generation). Settles into the
 // fully-formatted markdown-lite HTML once every word has appeared, so bold
 // text and bullets render correctly at rest.
-function typeReveal(el, text, thread) {
+function typeReveal(el, text, thread, onDone) {
   const tokens = text.split(/(\s+)/).filter(t => t.length);
   let i = 0;
   const step = () => {
-    if (i >= tokens.length) { el.innerHTML = renderMarkdownLite(text); thread.scrollTop = thread.scrollHeight; return; }
+    if (i >= tokens.length) { el.innerHTML = renderMarkdownLite(text); thread.scrollTop = thread.scrollHeight; if (onDone) onDone(); return; }
     const tok = tokens[i++];
     if (/^\s+$/.test(tok)) { el.appendChild(document.createTextNode(tok)); step(); return; }
     const span = document.createElement('span');
